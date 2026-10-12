@@ -1,6 +1,6 @@
 {
-  "schema_version": 3,
-  "generated_at": "2026-10-12T15:15:51.136806+00:00",
+  "schema_version": 4,
+  "generated_at": "2026-10-12T16:18:07.045540+00:00",
   "municipality": {
     "name": "Barendrecht",
     "cbs_code": "0489",
@@ -817,6 +817,389 @@
       "continuity_rule": "Historische trajecten gebruiken alleen wijkcodes die in alle tussenliggende CBS-jaargangen aanwezig zijn en geen bekende indelingswijziging hebben."
     }
   },
+  "signals": {
+    "summary": {
+      "method": "Geen risicoscore. De rang gebruikt alleen het hoogste landelijke percentiel van drie transparante structurele signalen.",
+      "peer_k": 10,
+      "population_floor": 500,
+      "national_reference_n": 2051,
+      "n_municipality": 21,
+      "thresholds": {
+        "zeer_opvallend": 97.5,
+        "opvallend": 90.0,
+        "aandacht": 75.0
+      }
+    },
+    "rows": [
+      {
+        "wijk_code": "WK048913",
+        "wijk_naam": "Voordijk",
+        "inwoners": 870.0,
+        "signaal_percentiel": 98.73232569478303,
+        "signaal_label": "zeer opvallend",
+        "primair_signaal": "weinig historisch precedent",
+        "peer_afwijking_percentiel": 48.074110190151146,
+        "profielbeweging_percentiel": 94.88054607508532,
+        "historische_zeldzaamheid_percentiel": 98.73232569478303,
+        "redenen": [
+          {
+            "label": "sterke structurele profielbeweging",
+            "percentiel": 94.88054607508532
+          },
+          {
+            "label": "weinig vergelijkbaar historisch precedent",
+            "percentiel": 98.73232569478303
+          }
+        ],
+        "veiligheidscontext": null
+      },
+      {
+        "wijk_code": "WK048902",
+        "wijk_naam": "Noord",
+        "inwoners": 2895.0,
+        "signaal_percentiel": 96.1969770843491,
+        "signaal_label": "opvallend",
+        "primair_signaal": "sterke profielbeweging",
+        "peer_afwijking_percentiel": 93.954168698196,
+        "profielbeweging_percentiel": 96.1969770843491,
+        "historische_zeldzaamheid_percentiel": 90.931253047294,
+        "redenen": [
+          {
+            "label": "ontwikkeling wijkt af van peers",
+            "percentiel": 93.954168698196
+          },
+          {
+            "label": "sterke structurele profielbeweging",
+            "percentiel": 96.1969770843491
+          },
+          {
+            "label": "weinig vergelijkbaar historisch precedent",
+            "percentiel": 90.931253047294
+          }
+        ],
+        "veiligheidscontext": null
+      },
+      {
+        "wijk_code": "WK048901",
+        "wijk_naam": "Centrum",
+        "inwoners": 1610.0,
+        "signaal_percentiel": 94.58800585080449,
+        "signaal_label": "opvallend",
+        "primair_signaal": "sterke profielbeweging",
+        "peer_afwijking_percentiel": 92.24768405655777,
+        "profielbeweging_percentiel": 94.58800585080449,
+        "historische_zeldzaamheid_percentiel": 87.42077035592393,
+        "redenen": [
+          {
+            "label": "ontwikkeling wijkt af van peers",
+            "percentiel": 92.24768405655777
+          },
+          {
+            "label": "sterke structurele profielbeweging",
+            "percentiel": 94.58800585080449
+          }
+        ],
+        "veiligheidscontext": null
+      },
+      {
+        "wijk_code": "WK048903",
+        "wijk_naam": "Binnenland",
+        "inwoners": 1060.0,
+        "signaal_percentiel": 94.24670892247684,
+        "signaal_label": "opvallend",
+        "primair_signaal": "afwijkende ontwikkeling t.o.v. peers",
+        "peer_afwijking_percentiel": 94.24670892247684,
+        "profielbeweging_percentiel": 92.93027791321306,
+        "historische_zeldzaamheid_percentiel": 84.44661140906875,
+        "redenen": [
+          {
+            "label": "ontwikkeling wijkt af van peers",
+            "percentiel": 94.24670892247684
+          },
+          {
+            "label": "sterke structurele profielbeweging",
+            "percentiel": 92.93027791321306
+          }
+        ],
+        "veiligheidscontext": {
+          "label": "geregistreerde criminaliteit stijgt",
+          "verandering_pct": 33.333333333333336,
+          "aantal_12m": 20.0
+        }
+      },
+      {
+        "wijk_code": "WK048907",
+        "wijk_naam": "Paddewei",
+        "inwoners": 2185.0,
+        "signaal_percentiel": 94.19795221843003,
+        "signaal_label": "opvallend",
+        "primair_signaal": "afwijkende ontwikkeling t.o.v. peers",
+        "peer_afwijking_percentiel": 94.19795221843003,
+        "profielbeweging_percentiel": 93.85665529010238,
+        "historische_zeldzaamheid_percentiel": 86.93320331545587,
+        "redenen": [
+          {
+            "label": "ontwikkeling wijkt af van peers",
+            "percentiel": 94.19795221843003
+          },
+          {
+            "label": "sterke structurele profielbeweging",
+            "percentiel": 93.85665529010238
+          }
+        ],
+        "veiligheidscontext": null
+      },
+      {
+        "wijk_code": "WK048916",
+        "wijk_naam": "Havenkwartier",
+        "inwoners": 1625.0,
+        "signaal_percentiel": 92.68649439297903,
+        "signaal_label": "opvallend",
+        "primair_signaal": "weinig historisch precedent",
+        "peer_afwijking_percentiel": 7.167235494880546,
+        "profielbeweging_percentiel": 21.160409556313994,
+        "historische_zeldzaamheid_percentiel": 92.68649439297903,
+        "redenen": [
+          {
+            "label": "weinig vergelijkbaar historisch precedent",
+            "percentiel": 92.68649439297903
+          }
+        ],
+        "veiligheidscontext": null
+      },
+      {
+        "wijk_code": "WK048910",
+        "wijk_naam": "Dorpzicht",
+        "inwoners": 555.0,
+        "signaal_percentiel": 91.32130667966845,
+        "signaal_label": "opvallend",
+        "primair_signaal": "afwijkende ontwikkeling t.o.v. peers",
+        "peer_afwijking_percentiel": 91.32130667966845,
+        "profielbeweging_percentiel": 78.64456362749877,
+        "historische_zeldzaamheid_percentiel": 73.81764992686495,
+        "redenen": [
+          {
+            "label": "ontwikkeling wijkt af van peers",
+            "percentiel": 91.32130667966845
+          }
+        ],
+        "veiligheidscontext": null
+      },
+      {
+        "wijk_code": "WK048912",
+        "wijk_naam": "Smitshoek",
+        "inwoners": 1575.0,
+        "signaal_percentiel": 90.931253047294,
+        "signaal_label": "opvallend",
+        "primair_signaal": "afwijkende ontwikkeling t.o.v. peers",
+        "peer_afwijking_percentiel": 90.931253047294,
+        "profielbeweging_percentiel": 78.0107264748903,
+        "historische_zeldzaamheid_percentiel": 77.32813261823502,
+        "redenen": [
+          {
+            "label": "ontwikkeling wijkt af van peers",
+            "percentiel": 90.931253047294
+          }
+        ],
+        "veiligheidscontext": {
+          "label": "geregistreerde criminaliteit daalt",
+          "verandering_pct": -34.0,
+          "aantal_12m": 33.0
+        }
+      },
+      {
+        "wijk_code": "WK048906",
+        "wijk_naam": "Ter Leede",
+        "inwoners": 1700.0,
+        "signaal_percentiel": 90.10238907849829,
+        "signaal_label": "opvallend",
+        "primair_signaal": "weinig historisch precedent",
+        "peer_afwijking_percentiel": 53.43734763529986,
+        "profielbeweging_percentiel": 87.37201365187714,
+        "historische_zeldzaamheid_percentiel": 90.10238907849829,
+        "redenen": [
+          {
+            "label": "weinig vergelijkbaar historisch precedent",
+            "percentiel": 90.10238907849829
+          }
+        ],
+        "veiligheidscontext": {
+          "label": "geregistreerde criminaliteit stijgt",
+          "verandering_pct": 69.23076923076923,
+          "aantal_12m": 22.0
+        }
+      },
+      {
+        "wijk_code": "WK048911",
+        "wijk_naam": "Bijdorp",
+        "inwoners": 1450.0,
+        "signaal_percentiel": 90.05363237445148,
+        "signaal_label": "opvallend",
+        "primair_signaal": "afwijkende ontwikkeling t.o.v. peers",
+        "peer_afwijking_percentiel": 90.05363237445148,
+        "profielbeweging_percentiel": 84.0078010726475,
+        "historische_zeldzaamheid_percentiel": 80.35104826913701,
+        "redenen": [
+          {
+            "label": "ontwikkeling wijkt af van peers",
+            "percentiel": 90.05363237445148
+          }
+        ],
+        "veiligheidscontext": null
+      },
+      {
+        "wijk_code": "WK048919",
+        "wijk_naam": "Vrijheidsakker",
+        "inwoners": 1195.0,
+        "signaal_percentiel": 89.95611896635788,
+        "signaal_label": "aandacht",
+        "primair_signaal": "sterke profielbeweging",
+        "peer_afwijking_percentiel": 70.59970745977571,
+        "profielbeweging_percentiel": 89.95611896635788,
+        "historische_zeldzaamheid_percentiel": 83.61774744027304,
+        "redenen": [],
+        "veiligheidscontext": null
+      },
+      {
+        "wijk_code": "WK048917",
+        "wijk_naam": "Gaatkensoog",
+        "inwoners": 775.0,
+        "signaal_percentiel": 85.6655290102389,
+        "signaal_label": "aandacht",
+        "primair_signaal": "weinig historisch precedent",
+        "peer_afwijking_percentiel": 81.52120916626035,
+        "profielbeweging_percentiel": 68.84446611409068,
+        "historische_zeldzaamheid_percentiel": 85.6655290102389,
+        "redenen": [],
+        "veiligheidscontext": null
+      },
+      {
+        "wijk_code": "WK048905",
+        "wijk_naam": "Buitenoord",
+        "inwoners": 3685.0,
+        "signaal_percentiel": 84.44661140906875,
+        "signaal_label": "aandacht",
+        "primair_signaal": "afwijkende ontwikkeling t.o.v. peers",
+        "peer_afwijking_percentiel": 84.44661140906875,
+        "profielbeweging_percentiel": 71.9161384690395,
+        "historische_zeldzaamheid_percentiel": 67.04046806435885,
+        "redenen": [],
+        "veiligheidscontext": null
+      },
+      {
+        "wijk_code": "WK048914",
+        "wijk_naam": "Meerwede",
+        "inwoners": 6035.0,
+        "signaal_percentiel": 83.95904436860067,
+        "signaal_label": "aandacht",
+        "primair_signaal": "weinig historisch precedent",
+        "peer_afwijking_percentiel": 80.49731838127742,
+        "profielbeweging_percentiel": 69.96587030716724,
+        "historische_zeldzaamheid_percentiel": 83.95904436860067,
+        "redenen": [],
+        "veiligheidscontext": null
+      },
+      {
+        "wijk_code": "WK048918",
+        "wijk_naam": "Riederhoek",
+        "inwoners": 1445.0,
+        "signaal_percentiel": 79.27840078010726,
+        "signaal_label": "aandacht",
+        "primair_signaal": "sterke profielbeweging",
+        "peer_afwijking_percentiel": 30.81423695758167,
+        "profielbeweging_percentiel": 79.27840078010726,
+        "historische_zeldzaamheid_percentiel": 75.32910775231593,
+        "redenen": [],
+        "veiligheidscontext": {
+          "label": "geregistreerde criminaliteit daalt",
+          "verandering_pct": -36.8421052631579,
+          "aantal_12m": 24.0
+        }
+      },
+      {
+        "wijk_code": "WK048915",
+        "wijk_naam": "Waterkant",
+        "inwoners": 1805.0,
+        "signaal_percentiel": 76.40175524134568,
+        "signaal_label": "aandacht",
+        "primair_signaal": "weinig historisch precedent",
+        "peer_afwijking_percentiel": 4.24183325207216,
+        "profielbeweging_percentiel": 39.68795709410044,
+        "historische_zeldzaamheid_percentiel": 76.40175524134568,
+        "redenen": [],
+        "veiligheidscontext": null
+      },
+      {
+        "wijk_code": "WK048904",
+        "wijk_naam": "Oranjewijk",
+        "inwoners": 2130.0,
+        "signaal_percentiel": 68.1131155533886,
+        "signaal_label": "regulier",
+        "primair_signaal": "weinig historisch precedent",
+        "peer_afwijking_percentiel": 34.90980009751341,
+        "profielbeweging_percentiel": 36.86006825938566,
+        "historische_zeldzaamheid_percentiel": 68.1131155533886,
+        "redenen": [],
+        "veiligheidscontext": null
+      },
+      {
+        "wijk_code": "WK048908",
+        "wijk_naam": "Molenvliet",
+        "inwoners": 2720.0,
+        "signaal_percentiel": 59.58069234519746,
+        "signaal_label": "regulier",
+        "primair_signaal": "weinig historisch precedent",
+        "peer_afwijking_percentiel": 33.154558751828375,
+        "profielbeweging_percentiel": 37.20136518771331,
+        "historische_zeldzaamheid_percentiel": 59.58069234519746,
+        "redenen": [],
+        "veiligheidscontext": {
+          "label": "geregistreerde criminaliteit daalt",
+          "verandering_pct": -31.818181818181817,
+          "aantal_12m": 45.0
+        }
+      },
+      {
+        "wijk_code": "WK048909",
+        "wijk_naam": "Nieuweland",
+        "inwoners": 4885.0,
+        "signaal_percentiel": 56.899073622623106,
+        "signaal_label": "regulier",
+        "primair_signaal": "weinig historisch precedent",
+        "peer_afwijking_percentiel": 46.855192588980984,
+        "profielbeweging_percentiel": 29.692832764505116,
+        "historische_zeldzaamheid_percentiel": 56.899073622623106,
+        "redenen": [],
+        "veiligheidscontext": null
+      },
+      {
+        "wijk_code": "WK048920",
+        "wijk_naam": "Vrijenburg",
+        "inwoners": 5470.0,
+        "signaal_percentiel": 50.70697220867869,
+        "signaal_label": "regulier",
+        "primair_signaal": "sterke profielbeweging",
+        "peer_afwijking_percentiel": 44.076060458313016,
+        "profielbeweging_percentiel": 50.70697220867869,
+        "historische_zeldzaamheid_percentiel": 47.294002925402246,
+        "redenen": [],
+        "veiligheidscontext": null
+      },
+      {
+        "wijk_code": "WK048931",
+        "wijk_naam": "Buitengebied Zuid",
+        "inwoners": 2730.0,
+        "signaal_percentiel": 43.49098000975134,
+        "signaal_label": "regulier",
+        "primair_signaal": "afwijkende ontwikkeling t.o.v. peers",
+        "peer_afwijking_percentiel": 43.49098000975134,
+        "profielbeweging_percentiel": 18.917601170160896,
+        "historische_zeldzaamheid_percentiel": 42.077035592393955,
+        "redenen": [],
+        "veiligheidscontext": null
+      }
+    ]
+  },
   "availability": {
     "inwoners": {
       "label": "Inwoners",
@@ -1571,6 +1954,7 @@
         ]
       },
       "historical": {},
+      "signal": null,
       "outcomes": {
         "leefbaarheid": {
           "wijk": 3.91864566505051,
@@ -3374,6 +3758,24 @@
         "candidate_count": 5931,
         "candidate_count_after_profile_gate": 1483,
         "caveat": "Historische analogieën beschrijven wat na vergelijkbare profielen en ontwikkelpaden gebeurde. Ze zijn geen causale voorspelling voor deze wijk."
+      },
+      "signal": {
+        "wijk_code": "WK048911",
+        "wijk_naam": "Bijdorp",
+        "inwoners": 1450.0,
+        "signaal_percentiel": 90.05363237445148,
+        "signaal_label": "opvallend",
+        "primair_signaal": "afwijkende ontwikkeling t.o.v. peers",
+        "peer_afwijking_percentiel": 90.05363237445148,
+        "profielbeweging_percentiel": 84.0078010726475,
+        "historische_zeldzaamheid_percentiel": 80.35104826913701,
+        "redenen": [
+          {
+            "label": "ontwikkeling wijkt af van peers",
+            "percentiel": 90.05363237445148
+          }
+        ],
+        "veiligheidscontext": null
       },
       "outcomes": {
         "leefbaarheid": {
@@ -5179,6 +5581,32 @@
         "candidate_count_after_profile_gate": 1483,
         "caveat": "Historische analogieën beschrijven wat na vergelijkbare profielen en ontwikkelpaden gebeurde. Ze zijn geen causale voorspelling voor deze wijk."
       },
+      "signal": {
+        "wijk_code": "WK048903",
+        "wijk_naam": "Binnenland",
+        "inwoners": 1060.0,
+        "signaal_percentiel": 94.24670892247684,
+        "signaal_label": "opvallend",
+        "primair_signaal": "afwijkende ontwikkeling t.o.v. peers",
+        "peer_afwijking_percentiel": 94.24670892247684,
+        "profielbeweging_percentiel": 92.93027791321306,
+        "historische_zeldzaamheid_percentiel": 84.44661140906875,
+        "redenen": [
+          {
+            "label": "ontwikkeling wijkt af van peers",
+            "percentiel": 94.24670892247684
+          },
+          {
+            "label": "sterke structurele profielbeweging",
+            "percentiel": 92.93027791321306
+          }
+        ],
+        "veiligheidscontext": {
+          "label": "geregistreerde criminaliteit stijgt",
+          "verandering_pct": 33.333333333333336,
+          "aantal_12m": 20.0
+        }
+      },
       "outcomes": {
         "leefbaarheid": {
           "wijk": 4.10830946313594,
@@ -5950,6 +6378,7 @@
         ]
       },
       "historical": {},
+      "signal": null,
       "outcomes": {
         "leefbaarheid": {
           "wijk": 4.36149630821706,
@@ -7764,6 +8193,19 @@
         "candidate_count_after_profile_gate": 1483,
         "caveat": "Historische analogieën beschrijven wat na vergelijkbare profielen en ontwikkelpaden gebeurde. Ze zijn geen causale voorspelling voor deze wijk."
       },
+      "signal": {
+        "wijk_code": "WK048931",
+        "wijk_naam": "Buitengebied Zuid",
+        "inwoners": 2730.0,
+        "signaal_percentiel": 43.49098000975134,
+        "signaal_label": "regulier",
+        "primair_signaal": "afwijkende ontwikkeling t.o.v. peers",
+        "peer_afwijking_percentiel": 43.49098000975134,
+        "profielbeweging_percentiel": 18.917601170160896,
+        "historische_zeldzaamheid_percentiel": 42.077035592393955,
+        "redenen": [],
+        "veiligheidscontext": null
+      },
       "outcomes": {
         "leefbaarheid": {
           "wijk": 4.18570067246374,
@@ -9562,6 +10004,19 @@
         "candidate_count_after_profile_gate": 1483,
         "caveat": "Historische analogieën beschrijven wat na vergelijkbare profielen en ontwikkelpaden gebeurde. Ze zijn geen causale voorspelling voor deze wijk."
       },
+      "signal": {
+        "wijk_code": "WK048905",
+        "wijk_naam": "Buitenoord",
+        "inwoners": 3685.0,
+        "signaal_percentiel": 84.44661140906875,
+        "signaal_label": "aandacht",
+        "primair_signaal": "afwijkende ontwikkeling t.o.v. peers",
+        "peer_afwijking_percentiel": 84.44661140906875,
+        "profielbeweging_percentiel": 71.9161384690395,
+        "historische_zeldzaamheid_percentiel": 67.04046806435885,
+        "redenen": [],
+        "veiligheidscontext": null
+      },
       "outcomes": {
         "leefbaarheid": {
           "wijk": 4.20719150156163,
@@ -11335,6 +11790,28 @@
         "candidate_count": 5931,
         "candidate_count_after_profile_gate": 1483,
         "caveat": "Historische analogieën beschrijven wat na vergelijkbare profielen en ontwikkelpaden gebeurde. Ze zijn geen causale voorspelling voor deze wijk."
+      },
+      "signal": {
+        "wijk_code": "WK048901",
+        "wijk_naam": "Centrum",
+        "inwoners": 1610.0,
+        "signaal_percentiel": 94.58800585080449,
+        "signaal_label": "opvallend",
+        "primair_signaal": "sterke profielbeweging",
+        "peer_afwijking_percentiel": 92.24768405655777,
+        "profielbeweging_percentiel": 94.58800585080449,
+        "historische_zeldzaamheid_percentiel": 87.42077035592393,
+        "redenen": [
+          {
+            "label": "ontwikkeling wijkt af van peers",
+            "percentiel": 92.24768405655777
+          },
+          {
+            "label": "sterke structurele profielbeweging",
+            "percentiel": 94.58800585080449
+          }
+        ],
+        "veiligheidscontext": null
       },
       "outcomes": {
         "leefbaarheid": {
@@ -13150,6 +13627,24 @@
         "candidate_count_after_profile_gate": 1483,
         "caveat": "Historische analogieën beschrijven wat na vergelijkbare profielen en ontwikkelpaden gebeurde. Ze zijn geen causale voorspelling voor deze wijk."
       },
+      "signal": {
+        "wijk_code": "WK048910",
+        "wijk_naam": "Dorpzicht",
+        "inwoners": 555.0,
+        "signaal_percentiel": 91.32130667966845,
+        "signaal_label": "opvallend",
+        "primair_signaal": "afwijkende ontwikkeling t.o.v. peers",
+        "peer_afwijking_percentiel": 91.32130667966845,
+        "profielbeweging_percentiel": 78.64456362749877,
+        "historische_zeldzaamheid_percentiel": 73.81764992686495,
+        "redenen": [
+          {
+            "label": "ontwikkeling wijkt af van peers",
+            "percentiel": 91.32130667966845
+          }
+        ],
+        "veiligheidscontext": null
+      },
       "outcomes": {
         "leefbaarheid": {
           "wijk": 4.20816624969001,
@@ -14954,6 +15449,19 @@
         "candidate_count_after_profile_gate": 1483,
         "caveat": "Historische analogieën beschrijven wat na vergelijkbare profielen en ontwikkelpaden gebeurde. Ze zijn geen causale voorspelling voor deze wijk."
       },
+      "signal": {
+        "wijk_code": "WK048917",
+        "wijk_naam": "Gaatkensoog",
+        "inwoners": 775.0,
+        "signaal_percentiel": 85.6655290102389,
+        "signaal_label": "aandacht",
+        "primair_signaal": "weinig historisch precedent",
+        "peer_afwijking_percentiel": 81.52120916626035,
+        "profielbeweging_percentiel": 68.84446611409068,
+        "historische_zeldzaamheid_percentiel": 85.6655290102389,
+        "redenen": [],
+        "veiligheidscontext": null
+      },
       "outcomes": {
         "leefbaarheid": {
           "wijk": 4.20773714342012,
@@ -16748,6 +17256,24 @@
         "candidate_count_after_profile_gate": 1483,
         "caveat": "Historische analogieën beschrijven wat na vergelijkbare profielen en ontwikkelpaden gebeurde. Ze zijn geen causale voorspelling voor deze wijk."
       },
+      "signal": {
+        "wijk_code": "WK048916",
+        "wijk_naam": "Havenkwartier",
+        "inwoners": 1625.0,
+        "signaal_percentiel": 92.68649439297903,
+        "signaal_label": "opvallend",
+        "primair_signaal": "weinig historisch precedent",
+        "peer_afwijking_percentiel": 7.167235494880546,
+        "profielbeweging_percentiel": 21.160409556313994,
+        "historische_zeldzaamheid_percentiel": 92.68649439297903,
+        "redenen": [
+          {
+            "label": "weinig vergelijkbaar historisch precedent",
+            "percentiel": 92.68649439297903
+          }
+        ],
+        "veiligheidscontext": null
+      },
       "outcomes": {
         "leefbaarheid": {
           "wijk": 4.12546237833136,
@@ -18535,6 +19061,19 @@
         "candidate_count": 5931,
         "candidate_count_after_profile_gate": 1483,
         "caveat": "Historische analogieën beschrijven wat na vergelijkbare profielen en ontwikkelpaden gebeurde. Ze zijn geen causale voorspelling voor deze wijk."
+      },
+      "signal": {
+        "wijk_code": "WK048914",
+        "wijk_naam": "Meerwede",
+        "inwoners": 6035.0,
+        "signaal_percentiel": 83.95904436860067,
+        "signaal_label": "aandacht",
+        "primair_signaal": "weinig historisch precedent",
+        "peer_afwijking_percentiel": 80.49731838127742,
+        "profielbeweging_percentiel": 69.96587030716724,
+        "historische_zeldzaamheid_percentiel": 83.95904436860067,
+        "redenen": [],
+        "veiligheidscontext": null
       },
       "outcomes": {
         "leefbaarheid": {
@@ -20330,6 +20869,23 @@
         "candidate_count_after_profile_gate": 1483,
         "caveat": "Historische analogieën beschrijven wat na vergelijkbare profielen en ontwikkelpaden gebeurde. Ze zijn geen causale voorspelling voor deze wijk."
       },
+      "signal": {
+        "wijk_code": "WK048908",
+        "wijk_naam": "Molenvliet",
+        "inwoners": 2720.0,
+        "signaal_percentiel": 59.58069234519746,
+        "signaal_label": "regulier",
+        "primair_signaal": "weinig historisch precedent",
+        "peer_afwijking_percentiel": 33.154558751828375,
+        "profielbeweging_percentiel": 37.20136518771331,
+        "historische_zeldzaamheid_percentiel": 59.58069234519746,
+        "redenen": [],
+        "veiligheidscontext": {
+          "label": "geregistreerde criminaliteit daalt",
+          "verandering_pct": -31.818181818181817,
+          "aantal_12m": 45.0
+        }
+      },
       "outcomes": {
         "leefbaarheid": {
           "wijk": 4.13359487263257,
@@ -22117,6 +22673,19 @@
         "candidate_count": 5931,
         "candidate_count_after_profile_gate": 1483,
         "caveat": "Historische analogieën beschrijven wat na vergelijkbare profielen en ontwikkelpaden gebeurde. Ze zijn geen causale voorspelling voor deze wijk."
+      },
+      "signal": {
+        "wijk_code": "WK048909",
+        "wijk_naam": "Nieuweland",
+        "inwoners": 4885.0,
+        "signaal_percentiel": 56.899073622623106,
+        "signaal_label": "regulier",
+        "primair_signaal": "weinig historisch precedent",
+        "peer_afwijking_percentiel": 46.855192588980984,
+        "profielbeweging_percentiel": 29.692832764505116,
+        "historische_zeldzaamheid_percentiel": 56.899073622623106,
+        "redenen": [],
+        "veiligheidscontext": null
       },
       "outcomes": {
         "leefbaarheid": {
@@ -23911,6 +24480,32 @@
         "candidate_count": 5931,
         "candidate_count_after_profile_gate": 1483,
         "caveat": "Historische analogieën beschrijven wat na vergelijkbare profielen en ontwikkelpaden gebeurde. Ze zijn geen causale voorspelling voor deze wijk."
+      },
+      "signal": {
+        "wijk_code": "WK048902",
+        "wijk_naam": "Noord",
+        "inwoners": 2895.0,
+        "signaal_percentiel": 96.1969770843491,
+        "signaal_label": "opvallend",
+        "primair_signaal": "sterke profielbeweging",
+        "peer_afwijking_percentiel": 93.954168698196,
+        "profielbeweging_percentiel": 96.1969770843491,
+        "historische_zeldzaamheid_percentiel": 90.931253047294,
+        "redenen": [
+          {
+            "label": "ontwikkeling wijkt af van peers",
+            "percentiel": 93.954168698196
+          },
+          {
+            "label": "sterke structurele profielbeweging",
+            "percentiel": 96.1969770843491
+          },
+          {
+            "label": "weinig vergelijkbaar historisch precedent",
+            "percentiel": 90.931253047294
+          }
+        ],
+        "veiligheidscontext": null
       },
       "outcomes": {
         "leefbaarheid": {
@@ -25726,6 +26321,19 @@
         "candidate_count_after_profile_gate": 1483,
         "caveat": "Historische analogieën beschrijven wat na vergelijkbare profielen en ontwikkelpaden gebeurde. Ze zijn geen causale voorspelling voor deze wijk."
       },
+      "signal": {
+        "wijk_code": "WK048904",
+        "wijk_naam": "Oranjewijk",
+        "inwoners": 2130.0,
+        "signaal_percentiel": 68.1131155533886,
+        "signaal_label": "regulier",
+        "primair_signaal": "weinig historisch precedent",
+        "peer_afwijking_percentiel": 34.90980009751341,
+        "profielbeweging_percentiel": 36.86006825938566,
+        "historische_zeldzaamheid_percentiel": 68.1131155533886,
+        "redenen": [],
+        "veiligheidscontext": null
+      },
       "outcomes": {
         "leefbaarheid": {
           "wijk": 4.27478132387695,
@@ -27540,6 +28148,28 @@
         "candidate_count_after_profile_gate": 1483,
         "caveat": "Historische analogieën beschrijven wat na vergelijkbare profielen en ontwikkelpaden gebeurde. Ze zijn geen causale voorspelling voor deze wijk."
       },
+      "signal": {
+        "wijk_code": "WK048907",
+        "wijk_naam": "Paddewei",
+        "inwoners": 2185.0,
+        "signaal_percentiel": 94.19795221843003,
+        "signaal_label": "opvallend",
+        "primair_signaal": "afwijkende ontwikkeling t.o.v. peers",
+        "peer_afwijking_percentiel": 94.19795221843003,
+        "profielbeweging_percentiel": 93.85665529010238,
+        "historische_zeldzaamheid_percentiel": 86.93320331545587,
+        "redenen": [
+          {
+            "label": "ontwikkeling wijkt af van peers",
+            "percentiel": 94.19795221843003
+          },
+          {
+            "label": "sterke structurele profielbeweging",
+            "percentiel": 93.85665529010238
+          }
+        ],
+        "veiligheidscontext": null
+      },
       "outcomes": {
         "leefbaarheid": {
           "wijk": 4.14427064357017,
@@ -29313,6 +29943,23 @@
         "candidate_count": 5931,
         "candidate_count_after_profile_gate": 1483,
         "caveat": "Historische analogieën beschrijven wat na vergelijkbare profielen en ontwikkelpaden gebeurde. Ze zijn geen causale voorspelling voor deze wijk."
+      },
+      "signal": {
+        "wijk_code": "WK048918",
+        "wijk_naam": "Riederhoek",
+        "inwoners": 1445.0,
+        "signaal_percentiel": 79.27840078010726,
+        "signaal_label": "aandacht",
+        "primair_signaal": "sterke profielbeweging",
+        "peer_afwijking_percentiel": 30.81423695758167,
+        "profielbeweging_percentiel": 79.27840078010726,
+        "historische_zeldzaamheid_percentiel": 75.32910775231593,
+        "redenen": [],
+        "veiligheidscontext": {
+          "label": "geregistreerde criminaliteit daalt",
+          "verandering_pct": -36.8421052631579,
+          "aantal_12m": 24.0
+        }
       },
       "outcomes": {
         "leefbaarheid": {
@@ -31107,6 +31754,28 @@
         "candidate_count": 5931,
         "candidate_count_after_profile_gate": 1483,
         "caveat": "Historische analogieën beschrijven wat na vergelijkbare profielen en ontwikkelpaden gebeurde. Ze zijn geen causale voorspelling voor deze wijk."
+      },
+      "signal": {
+        "wijk_code": "WK048912",
+        "wijk_naam": "Smitshoek",
+        "inwoners": 1575.0,
+        "signaal_percentiel": 90.931253047294,
+        "signaal_label": "opvallend",
+        "primair_signaal": "afwijkende ontwikkeling t.o.v. peers",
+        "peer_afwijking_percentiel": 90.931253047294,
+        "profielbeweging_percentiel": 78.0107264748903,
+        "historische_zeldzaamheid_percentiel": 77.32813261823502,
+        "redenen": [
+          {
+            "label": "ontwikkeling wijkt af van peers",
+            "percentiel": 90.931253047294
+          }
+        ],
+        "veiligheidscontext": {
+          "label": "geregistreerde criminaliteit daalt",
+          "verandering_pct": -34.0,
+          "aantal_12m": 33.0
+        }
       },
       "outcomes": {
         "leefbaarheid": {
@@ -32912,6 +33581,28 @@
         "candidate_count_after_profile_gate": 1483,
         "caveat": "Historische analogieën beschrijven wat na vergelijkbare profielen en ontwikkelpaden gebeurde. Ze zijn geen causale voorspelling voor deze wijk."
       },
+      "signal": {
+        "wijk_code": "WK048906",
+        "wijk_naam": "Ter Leede",
+        "inwoners": 1700.0,
+        "signaal_percentiel": 90.10238907849829,
+        "signaal_label": "opvallend",
+        "primair_signaal": "weinig historisch precedent",
+        "peer_afwijking_percentiel": 53.43734763529986,
+        "profielbeweging_percentiel": 87.37201365187714,
+        "historische_zeldzaamheid_percentiel": 90.10238907849829,
+        "redenen": [
+          {
+            "label": "weinig vergelijkbaar historisch precedent",
+            "percentiel": 90.10238907849829
+          }
+        ],
+        "veiligheidscontext": {
+          "label": "geregistreerde criminaliteit stijgt",
+          "verandering_pct": 69.23076923076923,
+          "aantal_12m": 22.0
+        }
+      },
       "outcomes": {
         "leefbaarheid": {
           "wijk": 4.25914081960295,
@@ -34695,6 +35386,28 @@
         "candidate_count": 5931,
         "candidate_count_after_profile_gate": 1483,
         "caveat": "Historische analogieën beschrijven wat na vergelijkbare profielen en ontwikkelpaden gebeurde. Ze zijn geen causale voorspelling voor deze wijk."
+      },
+      "signal": {
+        "wijk_code": "WK048913",
+        "wijk_naam": "Voordijk",
+        "inwoners": 870.0,
+        "signaal_percentiel": 98.73232569478303,
+        "signaal_label": "zeer opvallend",
+        "primair_signaal": "weinig historisch precedent",
+        "peer_afwijking_percentiel": 48.074110190151146,
+        "profielbeweging_percentiel": 94.88054607508532,
+        "historische_zeldzaamheid_percentiel": 98.73232569478303,
+        "redenen": [
+          {
+            "label": "sterke structurele profielbeweging",
+            "percentiel": 94.88054607508532
+          },
+          {
+            "label": "weinig vergelijkbaar historisch precedent",
+            "percentiel": 98.73232569478303
+          }
+        ],
+        "veiligheidscontext": null
       },
       "outcomes": {
         "leefbaarheid": {
@@ -36483,6 +37196,19 @@
         "candidate_count": 5931,
         "candidate_count_after_profile_gate": 1483,
         "caveat": "Historische analogieën beschrijven wat na vergelijkbare profielen en ontwikkelpaden gebeurde. Ze zijn geen causale voorspelling voor deze wijk."
+      },
+      "signal": {
+        "wijk_code": "WK048920",
+        "wijk_naam": "Vrijenburg",
+        "inwoners": 5470.0,
+        "signaal_percentiel": 50.70697220867869,
+        "signaal_label": "regulier",
+        "primair_signaal": "sterke profielbeweging",
+        "peer_afwijking_percentiel": 44.076060458313016,
+        "profielbeweging_percentiel": 50.70697220867869,
+        "historische_zeldzaamheid_percentiel": 47.294002925402246,
+        "redenen": [],
+        "veiligheidscontext": null
       },
       "outcomes": {
         "leefbaarheid": {
@@ -38288,6 +39014,19 @@
         "candidate_count_after_profile_gate": 1483,
         "caveat": "Historische analogieën beschrijven wat na vergelijkbare profielen en ontwikkelpaden gebeurde. Ze zijn geen causale voorspelling voor deze wijk."
       },
+      "signal": {
+        "wijk_code": "WK048919",
+        "wijk_naam": "Vrijheidsakker",
+        "inwoners": 1195.0,
+        "signaal_percentiel": 89.95611896635788,
+        "signaal_label": "aandacht",
+        "primair_signaal": "sterke profielbeweging",
+        "peer_afwijking_percentiel": 70.59970745977571,
+        "profielbeweging_percentiel": 89.95611896635788,
+        "historische_zeldzaamheid_percentiel": 83.61774744027304,
+        "redenen": [],
+        "veiligheidscontext": null
+      },
       "outcomes": {
         "leefbaarheid": {
           "wijk": 4.18307279647766,
@@ -40081,6 +40820,19 @@
         "candidate_count": 5931,
         "candidate_count_after_profile_gate": 1483,
         "caveat": "Historische analogieën beschrijven wat na vergelijkbare profielen en ontwikkelpaden gebeurde. Ze zijn geen causale voorspelling voor deze wijk."
+      },
+      "signal": {
+        "wijk_code": "WK048915",
+        "wijk_naam": "Waterkant",
+        "inwoners": 1805.0,
+        "signaal_percentiel": 76.40175524134568,
+        "signaal_label": "aandacht",
+        "primair_signaal": "weinig historisch precedent",
+        "peer_afwijking_percentiel": 4.24183325207216,
+        "profielbeweging_percentiel": 39.68795709410044,
+        "historische_zeldzaamheid_percentiel": 76.40175524134568,
+        "redenen": [],
+        "veiligheidscontext": null
       },
       "outcomes": {
         "leefbaarheid": {

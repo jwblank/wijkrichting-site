@@ -53,9 +53,60 @@ async function loadMunicipality(slug){
   const d=$("district");
   d.innerHTML=state.municipality.wijken.map(w=>'<option value="'+w.wijk_code+'" '+(w.wijk_naam==="Ter Leede"?"selected":"")+'>'+w.wijk_naam+'</option>').join("");
   d.onchange=()=>{populateTrendSelect();render();};
-  populateTrendSelect();render();
+  populateTrendSelect();renderMunicipalitySignals();render();
 }
 function getWijk(){return state.municipality.wijken.find(w=>w.wijk_code===$("district").value)||state.municipality.wijken[0];}
+
+function signalBadgeClass(label){
+  if(label==="zeer opvallend")return "signal-badge very-high";
+  if(label==="opvallend")return "signal-badge high";
+  return "signal-badge";
+}
+function renderMunicipalitySignals(){
+  const layer=state.municipality?.signals;
+  const box=$("municipalitySignals");
+  if(!layer?.rows?.length){
+    if(box)box.style.display="none";
+    return;
+  }
+  box.style.display="";
+  const rows=layer.rows;
+  const top=rows.filter(r=>r.signaal_percentiel>=90).slice(0,6);
+  const very=rows.filter(r=>r.signaal_label==="zeer opvallend").length;
+  const notable=rows.filter(r=>r.signaal_label==="opvallend").length;
+  const attention=rows.filter(r=>r.signaal_label==="aandacht").length;
+
+  $("signalReference").textContent="Landelijke referentie: n="+fmt.integer(layer.summary?.national_reference_n);
+  $("signalStats").innerHTML=
+    '<div class="signal-stat"><strong>'+very+'</strong><span>zeer opvallende wijken</span></div>'+
+    '<div class="signal-stat"><strong>'+notable+'</strong><span>opvallende wijken</span></div>'+
+    '<div class="signal-stat"><strong>'+attention+'</strong><span>extra aandacht</span></div>';
+
+  $("signalRows").innerHTML=(top.length?top:rows.slice(0,6)).map((r,i)=>{
+    const safety=r.veiligheidscontext
+      ? '<div class="signal-context">'+r.veiligheidscontext.label+' ('+fmt.signedPct(r.veiligheidscontext.verandering_pct)+')</div>'
+      : '';
+    return '<div class="signal-overview-row" data-code="'+r.wijk_code+'">'+
+      '<div><div class="signal-title">'+r.wijk_naam+'</div>'+safety+'</div>'+
+      '<div><div class="signal-reason">'+r.primair_signaal+'</div><div class="signal-meter"><div style="width:'+Math.min(r.signaal_percentiel,100)+'%"></div></div></div>'+
+      '<div class="signal-rank">landelijk '+fmt.one(r.signaal_percentiel)+'e percentiel</div>'+
+      '<div class="'+signalBadgeClass(r.signaal_label)+'">'+r.signaal_label+'</div>'+
+    '</div>';
+  }).join("");
+
+  document.querySelectorAll(".signal-overview-row").forEach(el=>{
+    el.onclick=()=>{
+      $("district").value=el.dataset.code;
+      populateTrendSelect();
+      render();
+      document.querySelector(".intro-row")?.scrollIntoView({behavior:"smooth",block:"start"});
+    };
+  });
+
+  $("signalMethod").textContent=
+    "De signalering combineert niets tot één verborgen score. Per wijk berekenen we drie landelijke percentielen: afwijking van recente ontwikkeling ten opzichte van structurele peers, sterkte van de profielbeweging en gebrek aan historisch precedent. De overzichtsrang is simpelweg het hoogste van die drie. Veiligheid is alleen context en telt niet mee.";
+}
+
 function populateTrendSelect(){
   const w=getWijk();
   const preferred=["gemiddelde_woz","inwoners","leeftijd_65_plus_pct","leeftijd_0_15_pct","eenpersoonshuishoudens_pct","huishoudens_met_kinderen_pct","koopwoningen_pct","huurwoningen_pct","gemiddeld_inkomen"];
