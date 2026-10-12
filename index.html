@@ -35,28 +35,16 @@
       </div>
     </section>
 
-    <section id="municipalitySignals" class="card municipality-signals">
-      <div class="section-head">
-        <div>
-          <div class="eyebrow dark">GEMEENTE IN ÉÉN OOGOPSLAG</div>
-          <h3>Waar gebeurt iets opvallends?</h3>
-          <p class="note">Geen risicoscore. Een wijk verschijnt hier als één van drie structurele signalen landelijk uitzonderlijk is.</p>
-        </div>
-        <div id="signalReference" class="pill">–</div>
-      </div>
-      <div id="signalStats" class="signal-stats"></div>
-      <div id="signalRows" class="signal-overview-list"></div>
-      <details class="method-details">
-        <summary>Hoe werkt de signalering?</summary>
-        <p id="signalMethod"></p>
-      </details>
-    </section>
-
-    <section class="intro-row">
+    <section id="wijkProfileTop" class="intro-row">
       <div>
-        <div class="eyebrow dark">WIJKPROFIEL</div>
+        <div class="eyebrow dark">GESELECTEERDE WIJK</div>
         <h2 id="districtTitle">–</h2>
         <p id="districtSubtitle" class="muted">–</p>
+        <p class="first-visit-context">
+          Begin hier: eerst zie je hoe deze wijk ervoor staat en verandert. Daarna vergelijken we haar met
+          soortgelijke wijken en met historische wijktrajecten. Lager op de pagina staat de gemeentelijke
+          signalering om andere opvallende wijken te ontdekken.
+        </p>
       </div>
       <div id="freshness" class="freshness"></div>
     </section>
@@ -88,6 +76,23 @@
         <div id="composition" class="composition"></div>
         <p id="compositionNote" class="note"></p>
       </article>
+    </section>
+
+    <section id="municipalitySignals" class="card municipality-signals">
+      <div class="section-head">
+        <div>
+          <div class="eyebrow dark">GEMEENTEOVERZICHT</div>
+          <h3 id="signalTitle">Welke andere wijken vallen op?</h3>
+          <p id="signalIntro" class="note">Deze laag helpt je vanuit de geselecteerde wijk verder kijken naar de gemeente.</p>
+        </div>
+        <div id="signalReference" class="pill">–</div>
+      </div>
+      <div id="signalStats" class="signal-stats"></div>
+      <div id="signalRows" class="signal-overview-list"></div>
+      <details class="method-details">
+        <summary>Hoe werkt de signalering?</summary>
+        <p id="signalMethod"></p>
+      </details>
     </section>
 
     <section class="two-col">
