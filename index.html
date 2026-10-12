@@ -2,8 +2,8 @@
 <html lang="nl">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="description" content="WijkRichting laat zien hoe Nederlandse wijken veranderen en welke kant hun profiel op beweegt.">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="WijkRichting laat zien hoe een wijk verandert, welke wijken erop lijken en welke kant het profiel op beweegt.">
   <title>WijkRichting</title>
   <link rel="stylesheet" href="assets/style.css">
 </head>
@@ -11,21 +11,37 @@
   <header class="hero">
     <div class="wrap">
       <div class="eyebrow">WIJKRICHTING</div>
-      <h1>Zie niet alleen hoe een wijk ervoor staat,<br>maar welke kant hij op beweegt.</h1>
-      <p class="hero-copy">Vooraf berekende wijkanalyse op openbare data. Compact, uitlegbaar en zonder black box.</p>
+      <h1>Zie hoe een wijk verandert — en welke kant het profiel op beweegt.</h1>
+      <p class="hero-copy">
+        Een compacte, uitlegbare wijkanalyse op openbare data. Geen black box:
+        elke vergelijking laat zien welke kenmerken meetellen en hoe actueel de bron is.
+      </p>
     </div>
   </header>
 
   <main class="wrap main">
     <section class="selector-panel card">
-      <div><label for="municipality">Gemeente</label><select id="municipality"></select></div>
-      <div><label for="district">Wijk</label><select id="district"></select></div>
-      <div class="update-block"><span class="label">Databuild</span><strong id="generatedAt">–</strong></div>
+      <div>
+        <label for="municipality">Gemeente</label>
+        <select id="municipality"></select>
+      </div>
+      <div>
+        <label for="district">Wijk</label>
+        <select id="district"></select>
+      </div>
+      <div class="update-block">
+        <span class="label">Laatste databuild</span>
+        <strong id="generatedAt">–</strong>
+      </div>
     </section>
 
     <section class="intro-row">
-      <div><div class="eyebrow dark">WIJKPROFIEL</div><h2 id="districtTitle">–</h2><p id="districtSubtitle" class="muted">–</p></div>
-      <div class="freshness" id="freshness"></div>
+      <div>
+        <div class="eyebrow dark">WIJKPROFIEL</div>
+        <h2 id="districtTitle">–</h2>
+        <p id="districtSubtitle" class="muted">–</p>
+      </div>
+      <div id="freshness" class="freshness"></div>
     </section>
 
     <section id="kpis" class="kpi-grid"></section>
@@ -33,7 +49,10 @@
     <section class="two-col">
       <article class="card">
         <div class="section-head">
-          <div><div class="eyebrow dark">ONTWIKKELING</div><h3>Hoe verandert de wijk?</h3></div>
+          <div>
+            <div class="eyebrow dark">ONTWIKKELING</div>
+            <h3>Hoe verandert de wijk?</h3>
+          </div>
           <select id="trendMetric" class="small-select"></select>
         </div>
         <div id="trendChart" class="chart"></div>
@@ -42,9 +61,34 @@
 
       <article class="card">
         <div class="eyebrow dark">SAMENSTELLING</div>
-        <h3>Wat valt nu op?</h3>
+        <h3>Profiel van de wijk</h3>
         <div id="composition" class="composition"></div>
         <p id="compositionNote" class="note"></p>
+      </article>
+    </section>
+
+    <section class="three-col">
+      <article class="card">
+        <div class="eyebrow dark">SIGNALEN</div>
+        <h3>Wat valt op?</h3>
+        <div id="observations" class="signal-list"></div>
+      </article>
+
+      <article class="card">
+        <div class="eyebrow dark">LEEFBAARHEID</div>
+        <h3>Ontwikkeling Leefbaarometer</h3>
+        <div id="liveabilitySummary" class="summary-number"></div>
+        <div id="liveabilityChart" class="mini-chart"></div>
+        <p id="liveabilityNote" class="note"></p>
+      </article>
+
+      <article class="card">
+        <div class="eyebrow dark">VEILIGHEID</div>
+        <h3>Geregistreerde criminaliteit</h3>
+        <div id="crimeSummary" class="summary-number"></div>
+        <div id="crimeChart" class="mini-chart"></div>
+        <div id="crimeCategories" class="category-list"></div>
+        <p id="crimeNote" class="note"></p>
       </article>
     </section>
 
@@ -52,50 +96,88 @@
       <article class="card">
         <div class="eyebrow dark">HUIDIGE PEERS</div>
         <h3>Lijkt nu het meest op</h3>
-        <p class="note">Rang 1 = meest vergelijkbaar binnen de landelijke 2024-set. De technische afstand is alleen een onderliggende rekenmaat.</p>
+        <p class="note">
+          Rang 1 is de meest vergelijkbare wijk binnen het relevante landelijke vergelijkingsuniversum.
+          De technische afstand is een rekenmaat: 0 = identiek, zonder vaste bovengrens.
+        </p>
         <div id="peers" class="list"></div>
-        <details class="method-details"><summary>Waarom worden deze wijken vergeleken?</summary><p id="peerFeatures"></p></details>
+        <details class="method-details">
+          <summary>Waarom worden deze wijken vergeleken?</summary>
+          <div id="peerDomains" class="domain-list"></div>
+        </details>
       </article>
 
       <article class="card accent-card">
         <div class="eyebrow dark">PROFIELVERSCHUIVING</div>
         <h3>Waar beweegt het profiel naartoe?</h3>
-        <p class="note">Geen voorspelling dat de wijk letterlijk een andere wijk wordt. Dit laat zien welk huidig wijkprofiel het meest lijkt op de gemeten ontwikkelrichting.</p>
+        <p class="note">
+          Geen voorspelling dat de wijk letterlijk een andere wijk wordt.
+          We projecteren structurele trends en zoeken welk huidig wijkprofiel daar het meest op lijkt.
+        </p>
         <div id="direction" class="list"></div>
       </article>
     </section>
 
     <section class="card">
       <div class="section-head">
-        <div><div class="eyebrow dark">UITLEGBARE RICHTING</div><h3>Waarom deze richting?</h3></div>
+        <div>
+          <div class="eyebrow dark">UITLEGBARE RICHTING</div>
+          <h3>Waarom deze richting?</h3>
+        </div>
         <div id="directionStrength" class="pill">–</div>
       </div>
+      <p id="directionMeta" class="note"></p>
       <div id="drivers" class="driver-grid"></div>
     </section>
 
     <section class="two-col">
       <article class="card">
-        <div class="eyebrow dark">LEEFBAARHEID & VEILIGHEID</div>
+        <div class="eyebrow dark">MOGELIJKE BETEKENIS</div>
         <h3>Wat zien we bij het profiel waar de wijk naartoe beweegt?</h3>
-        <p class="note">Leefbaarheid en criminaliteit sturen de structurele matching niet. Ze worden daarna gebruikt als onafhankelijke context.</p>
+        <p class="note">
+          Leefbaarheid en criminaliteit sturen de structurele matching niet.
+          Ze worden pas daarna naast huidige peers en richting-peers gelegd.
+        </p>
         <div id="outcomes"></div>
       </article>
 
       <article class="card">
-        <div class="eyebrow dark">TRANSPARANTIE</div>
-        <h3>Bronnen en actualiteit</h3>
+        <div class="eyebrow dark">ACTUALITEIT & BRONNEN</div>
+        <h3>Hoe actueel zijn de cijfers?</h3>
         <div id="sources" class="source-list"></div>
-        <details class="method-details"><summary>Hoe werkt WijkRichting?</summary><p>De publieke site bevat alleen vooraf berekende resultaten. De analysemotor staat in een private repository. De site toont welke kenmerken de vergelijking dragen, maar publiceert geen landelijke featurematrix, interne gewichten of volledige afstandsmatrices.</p></details>
+        <details class="method-details">
+          <summary>Methodiek in gewone taal</summary>
+          <p id="methodSummary"></p>
+        </details>
       </article>
     </section>
 
+    <section class="card data-quality-card">
+      <div class="eyebrow dark">DATAKWALITEIT</div>
+      <h3>Beschikbaarheid per indicator</h3>
+      <p class="note">
+        Een ontbrekende of veranderde reeks wordt niet stilletjes ingevuld.
+        WijkRichting toont welke jaren daadwerkelijk beschikbaar zijn.
+      </p>
+      <div id="availabilityTable"></div>
+    </section>
+
     <section class="method-banner">
-      <strong>Zo lees je WijkRichting</strong>
-      <p>De kracht zit niet in één score, maar in de combinatie van huidige positie, ontwikkeling, vergelijkbare wijken en profielverschuiving. Waar data niet actueel of niet beschikbaar zijn, wordt dat expliciet vermeld.</p>
+      <strong>Belangrijk om goed te lezen</strong>
+      <p>
+        WijkRichting is een analyse van profielen en ontwikkelingen, geen causale voorspelling.
+        Een wijk kan zich op sommige kenmerken richting een andere peer-groep bewegen zonder dat alle uitkomsten van die groep automatisch volgen.
+      </p>
     </section>
   </main>
 
-  <footer><div class="wrap footer-inner"><span>WijkRichting · publieke demo</span><span>Openbare data · vooraf berekende analyse</span></div></footer>
+  <footer>
+    <div class="wrap footer-inner">
+      <span>WijkRichting · publieke demo</span>
+      <span>Vooraf berekende analyse op openbare bronnen</span>
+    </div>
+  </footer>
+
   <script src="assets/app.js"></script>
 </body>
 </html>
