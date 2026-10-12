@@ -76,6 +76,9 @@ function renderMunicipalitySignals(){
   const notable=rows.filter(r=>r.signaal_label==="opvallend").length;
   const attention=rows.filter(r=>r.signaal_label==="aandacht").length;
 
+  const municipalityName=state.municipality?.municipality?.name || $("municipality")?.selectedOptions?.[0]?.textContent || "de gemeente";
+  $("signalTitle").textContent="Welke andere wijken in "+municipalityName+" vallen op?";
+  $("signalIntro").textContent="Gebruik dit overzicht pas na de wijkanalyse: het laat zien welke andere wijken structureel uitzonderlijk veranderen of weinig historisch precedent hebben.";
   $("signalReference").textContent="Landelijke referentie: n="+fmt.integer(layer.summary?.national_reference_n);
   $("signalStats").innerHTML=
     '<div class="signal-stat"><strong>'+very+'</strong><span>zeer opvallende wijken</span></div>'+
@@ -99,7 +102,7 @@ function renderMunicipalitySignals(){
       $("district").value=el.dataset.code;
       populateTrendSelect();
       render();
-      document.querySelector(".intro-row")?.scrollIntoView({behavior:"smooth",block:"start"});
+      document.querySelector("#wijkProfileTop")?.scrollIntoView({behavior:"smooth",block:"start"});
     };
   });
 
@@ -119,7 +122,7 @@ function render(){
   document.querySelectorAll(".warning-box.dynamic").forEach(x=>x.remove());
   const w=getWijk();
   $("districtTitle").textContent=w.wijk_naam+", "+trim(w.gemeente);
-  $("districtSubtitle").textContent="Een samenvatting van de huidige samenstelling, recente ontwikkeling en positie tussen vergelijkbare Nederlandse wijken.";
+  $("districtSubtitle").textContent="Je bekijkt nu deze wijk. We starten met de huidige situatie en recente ontwikkeling en bouwen daarna stap voor stap op naar vergelijking, scenario en historische toets.";
   renderFreshness(w);renderKpis(w);renderObservations(w);renderTrend(w);renderComposition(w);
   renderLiveability(w);renderCrime(w);renderPeers(w);renderDirection(w);renderDrivers(w);
   renderHistorical(w);renderOutcomes(w);renderSources(w);renderAvailability(w);
