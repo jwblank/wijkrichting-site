@@ -213,14 +213,16 @@ function signedOne(v){
 }
 function historicalValue(item){
   if(!item)return "–";
-  return item.eenheid==="procent"
-    ? signedOne(item.mediaan)+"%"
-    : signedOne(item.mediaan)+" pp";
+  const value=item.mediaan_tov_landelijk ?? item.mediaan;
+  const suffix=String(item.eenheid||"").includes("procentpunt")?" pp":"%";
+  return signedOne(value)+suffix;
 }
 function historicalRange(item){
   if(!item)return "";
-  const suffix=item.eenheid==="procent"?"%":" pp";
-  return "middelste 50%: "+signedOne(item.p25)+suffix+" tot "+signedOne(item.p75)+suffix;
+  const p25=item.p25_tov_landelijk ?? item.p25;
+  const p75=item.p75_tov_landelijk ?? item.p75;
+  const suffix=String(item.eenheid||"").includes("procentpunt")?" pp":"%";
+  return "middelste 50%: "+signedOne(p25)+suffix+" tot "+signedOne(p75)+suffix;
 }
 function renderHistorical(w){
   const h=w.historical||{};
@@ -240,15 +242,16 @@ function renderHistorical(w){
   const directionBacktest=state.municipality.method?.historical_validation?.direction_backtest?.overall||{};
 
   $("historicalIntro").textContent=
-    "We zoeken oudere Nederlandse wijksituaties met een vergelijkbare structuur én een vergelijkbare wijk-specifieke ontwikkeling. Algemene landelijke bewegingen, zoals een brede WOZ-stijging, worden eerst uitgefilterd. Daarna kijken we wat in de volgende twee jaar werkelijk gebeurde.";
+    "We zoeken oudere Nederlandse wijksituaties met een vergelijkbare structuur én een vergelijkbare wijk-specifieke ontwikkeling. Algemene landelijke bewegingen, zoals een brede WOZ-stijging, worden eerst uitgefilterd. De cijfers hieronder laten zien hoe die analogieën zich in de twee jaar daarna ontwikkelden ten opzichte van de landelijke beweging.";
 
+  const historicalOutcomes=h.relative_outcomes||h.outcomes||{};
   const keys=["leeftijd_65_plus_pct","leeftijd_0_15_pct","gemiddelde_woz","inwoners"];
   $("historicalOutcomes").innerHTML=keys
-    .filter(k=>h.outcomes?.[k])
+    .filter(k=>historicalOutcomes[k])
     .map(k=>{
-      const x=h.outcomes[k];
+      const x=historicalOutcomes[k];
       return '<div class="historical-outcome">'+
-        '<div class="hist-label">'+x.label+'</div>'+
+        '<div class="hist-label">'+x.label+' · t.o.v. landelijk</div>'+
         '<div class="hist-value">'+historicalValue(x)+'</div>'+
         '<div class="hist-range">'+historicalRange(x)+'</div>'+
         '</div>';
