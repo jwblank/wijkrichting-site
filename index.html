@@ -109,11 +109,12 @@
       </article>
 
       <article class="card accent-card">
-        <div class="eyebrow dark">PROFIELVERSCHUIVING</div>
-        <h3>Waar beweegt het profiel naartoe?</h3>
+        <div class="eyebrow dark">SCENARIO BIJ DOORZETTEN TREND</div>
+        <h3>Welke wijkprofielen liggen in het verlengde?</h3>
         <p class="note">
-          Geen voorspelling dat de wijk letterlijk een andere wijk wordt.
-          We projecteren structurele trends en zoeken welk huidig wijkprofiel daar het meest op lijkt.
+          Dit is bewust geen voorspelling. We trekken de recente structurele ontwikkeling door en
+          zoeken welke huidige wijkprofielen daarbij passen. De historische toets laat zien dat deze
+          richting vooral als scenario moet worden gelezen.
         </p>
         <div id="direction" class="list"></div>
       </article>
@@ -131,10 +132,40 @@
       <div id="drivers" class="driver-grid"></div>
     </section>
 
+    <section class="card historical-card">
+      <div class="section-head">
+        <div>
+          <div class="eyebrow dark">HISTORISCHE TOETS</div>
+          <h3>Wat gebeurde eerder bij vergelijkbare wijktrajecten?</h3>
+        </div>
+        <div id="historicalValidationBadge" class="pill">Out-of-time getoetst</div>
+      </div>
+      <p id="historicalIntro" class="note"></p>
+
+      <div class="historical-layout">
+        <div>
+          <h4>Wat volgde daarna?</h4>
+          <div id="historicalOutcomes" class="historical-outcomes"></div>
+          <p id="historicalLiveability" class="note"></p>
+        </div>
+        <div>
+          <h4>Meest vergelijkbare historische trajecten</h4>
+          <div id="historicalAnalogs" class="list"></div>
+        </div>
+      </div>
+
+      <div id="historicalEvidence" class="evidence-strip"></div>
+
+      <details class="method-details">
+        <summary>Hoe is dit statistisch getoetst?</summary>
+        <div id="historicalMethod"></div>
+      </details>
+    </section>
+
     <section class="two-col">
       <article class="card">
-        <div class="eyebrow dark">MOGELIJKE BETEKENIS</div>
-        <h3>Wat zien we bij het profiel waar de wijk naartoe beweegt?</h3>
+        <div class="eyebrow dark">CONTEXT BIJ HET SCENARIO</div>
+        <h3>Wat zien we bij wijken die op het trendscenario lijken?</h3>
         <p class="note">
           Leefbaarheid en criminaliteit sturen de structurele matching niet.
           Ze worden pas daarna naast huidige peers en richting-peers gelegd.
@@ -166,8 +197,9 @@
     <section class="method-banner">
       <strong>Belangrijk om goed te lezen</strong>
       <p>
-        WijkRichting is een analyse van profielen en ontwikkelingen, geen causale voorspelling.
-        Een wijk kan zich op sommige kenmerken richting een andere peer-groep bewegen zonder dat alle uitkomsten van die groep automatisch volgen.
+        WijkRichting onderscheidt drie dingen: wat nu zichtbaar is, een scenario als recente trends doorzetten,
+        en wat historisch gebeurde bij vergelijkbare wijktrajecten. Alleen die laatste laag is out-of-time getoetst.
+        Geen van deze onderdelen is een causale voorspelling.
       </p>
     </section>
   </main>
