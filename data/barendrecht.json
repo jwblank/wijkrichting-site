@@ -1,0 +1,23 @@
+{
+  "schema_version":1,
+  "generated_at":"2026-10-12T12:30:00+00:00",
+  "municipality":{"name":"Barendrecht","cbs_code":"0489","latest_structural_year":2024},
+  "method":{"public_summary":"Vooraf berekende structurele vergelijking en ontwikkelrichting.","technical_details_public":false},
+  "availability":{},
+  "wijken":[{
+    "wijk_code":"WK048906","wijk_naam":"Ter Leede","gemeente":"Barendrecht","gemeente_code":"0489","latest_year":2024,
+    "metrics":{"inwoners":1705,"gemiddelde_woz":588000,"gemiddeld_inkomen":42800,"leeftijd_0_15_pct":19,"leeftijd_65_plus_pct":17,"eenpersoonshuishoudens_pct":24,"huishoudens_met_kinderen_pct":39,"huurwoningen_pct":12,"koopwoningen_pct":88},
+    "history":{"gemiddelde_woz":[{"jaar":2018,"waarde":345000},{"jaar":2020,"waarde":418000},{"jaar":2022,"waarde":482000},{"jaar":2024,"waarde":588000}],"leeftijd_65_plus_pct":[{"jaar":2020,"waarde":14.7},{"jaar":2022,"waarde":15.8},{"jaar":2024,"waarde":17.0}],"leeftijd_0_15_pct":[{"jaar":2020,"waarde":22.1},{"jaar":2022,"waarde":20.2},{"jaar":2024,"waarde":19.0}]},
+    "peers":[
+      {"rank":1,"van":3392,"wijk_code":"WK048917","wijk_naam":"Wijk 17 Gaatkensoog","gemeente":"Barendrecht","technische_afstand":0.391859},
+      {"rank":2,"van":3392,"wijk_code":"WK162112","wijk_naam":"Wijk 12 De Ackers","gemeente":"Lansingerland","technische_afstand":0.456801},
+      {"rank":3,"van":3392,"wijk_code":"WK162125","wijk_naam":"Wijk 25 Zuidpolder","gemeente":"Lansingerland","technische_afstand":0.458612},
+      {"rank":4,"van":3392,"wijk_code":"WK199211","wijk_naam":"Ravense Hoek","gemeente":"Voorne aan Zee","technische_afstand":0.460549},
+      {"rank":5,"van":3392,"wijk_code":"WK034005","wijk_naam":"Wijk 07 Achterberg","gemeente":"Rhenen","technische_afstand":0.464132}
+    ],
+    "peer_features":[{"key":"leeftijd_0_15_pct","label":"0–15 jaar"},{"key":"leeftijd_65_plus_pct","label":"65+"},{"key":"eenpersoonshuishoudens_pct","label":"Eenpersoonshuishoudens"},{"key":"huishoudens_met_kinderen_pct","label":"Huishoudens met kinderen"},{"key":"bevolkingsdichtheid","label":"Bevolkingsdichtheid"},{"key":"gemiddelde_woz","label":"Gemiddelde WOZ"},{"key":"huurwoningen_pct","label":"Huurwoningen"}],
+    "direction":{"summary":{"basisperiode":"2020–2024","recente_periode":"2022–2024","richting_horizon":"circa 2026","aantal_features":7,"bewegingssterkte_sd":0.2487,"sterkte_label":"matig","trendconsistentie_pct":57.1},
+      "drivers":[{"indicator":"gemiddelde_woz","label":"Gemiddelde WOZ","richting":"omhoog","geprojecteerde_beweging_sd":0.7362,"recente_beweging_sd":0.8355},{"indicator":"eenpersoonshuishoudens_pct","label":"Eenpersoonshuishoudens","richting":"omhoog","geprojecteerde_beweging_sd":0.2130,"recente_beweging_sd":0.2506},{"indicator":"leeftijd_0_15_pct","label":"0–15 jaar","richting":"omlaag","geprojecteerde_beweging_sd":-0.2055,"recente_beweging_sd":-0.1646},{"indicator":"leeftijd_65_plus_pct","label":"65+","richting":"omhoog","geprojecteerde_beweging_sd":0.1981,"recente_beweging_sd":0.1335},{"indicator":"huishoudens_met_kinderen_pct","label":"Huishoudens met kinderen","richting":"omlaag","geprojecteerde_beweging_sd":-0.1591,"recente_beweging_sd":-0.1591}],
+      "profile_shift":[{"wijk_code":"WK191610","wijk_naam":"Voorburg West / Park Leeuwenbergh","gemeente":"Leidschendam-Voorburg","huidige_rank":null,"richting_rank":1,"status":"nieuwe richting","afstand_verandering":null,"toelichting":"Komt nieuw in de topgroep wanneer de recente ontwikkeling wordt doorgetrokken."},{"wijk_code":"WK048917","wijk_naam":"Wijk 17 Gaatkensoog","gemeente":"Barendrecht","huidige_rank":1,"richting_rank":2,"status":"blijft referentiepunt","afstand_verandering":0.156951,"toelichting":"Blijft vergelijkbaar, maar de gelijkenis neemt af."},{"wijk_code":"WK057906","wijk_naam":"De Kwaak","gemeente":"Oegstgeest","huidige_rank":null,"richting_rank":3,"status":"nieuwe richting","afstand_verandering":null,"toelichting":"Komt nieuw in de topgroep wanneer de recente ontwikkeling wordt doorgetrokken."},{"wijk_code":"WK048904","wijk_naam":"Wijk 04 Oranjewijk","gemeente":"Barendrecht","huidige_rank":5,"richting_rank":4,"status":"blijft referentiepunt","afstand_verandering":0.148535,"toelichting":"Blijft vergelijkbaar, maar de gelijkenis neemt af."},{"wijk_code":"WK032106","wijk_naam":"Houten Zuid-Oost","gemeente":"Houten","huidige_rank":null,"richting_rank":5,"status":"nieuwe richting","afstand_verandering":null,"toelichting":"Komt nieuw in de topgroep wanneer de recente ontwikkeling wordt doorgetrokken."}]}
+  }]
+}
