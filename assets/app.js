@@ -71,7 +71,7 @@ function render(){
   $("districtSubtitle").textContent="Een samenvatting van de huidige samenstelling, recente ontwikkeling en positie tussen vergelijkbare Nederlandse wijken.";
   renderFreshness(w);renderKpis(w);renderObservations(w);renderTrend(w);renderComposition(w);
   renderLiveability(w);renderCrime(w);renderPeers(w);renderDirection(w);renderDrivers(w);
-  renderOutcomes(w);renderSources(w);renderAvailability(w);
+  renderHistorical(w);renderOutcomes(w);renderSources(w);renderAvailability(w);
 }
 function renderFreshness(w){
   const arr=[
@@ -204,8 +204,87 @@ function renderDrivers(w){
   const d=w.direction?.drivers||[],s=w.direction?.summary||{};
   $("drivers").innerHTML=d.slice(0,5).map(x=>'<div class="driver"><div class="driver-domain">'+(x.domein||"")+'</div><strong>'+x.label+'</strong><div class="driver-val">'+(x.richting==="omhoog"?"↑":"↓")+' '+movementLabel(x.geprojecteerde_beweging_sd)+'</div><div class="driver-dir">'+x.richting+'</div><div class="driver-tech">technisch: '+(x.geprojecteerde_beweging_sd>0?"+":"")+fmt.two(x.geprojecteerde_beweging_sd)+' SD</div></div>').join("")||'<div class="empty">Geen drivers beschikbaar.</div>';
   $("directionStrength").textContent=s.sterkte_label?"Profielbeweging: "+s.sterkte_label:"Profielbeweging: –";
-  $("directionMeta").textContent=s.recente_periode?"Gebaseerd op "+s.basisperiode+"; de recente periode "+s.recente_periode+" telt zwaarder mee. "+(s.aantal_domeinen||"–")+" inhoudelijke domeinen zijn gebruikt.":"";
+  $("directionMeta").textContent=s.recente_periode?"Scenario bij doorzetten van de structurele trend uit "+s.basisperiode+"; de recente periode "+s.recente_periode+" telt zwaarder mee. Dit onderdeel is geen voorspelling.":"";
 }
+
+function signedOne(v){
+  if(v==null)return "–";
+  return (v>0?"+":"")+fmt.one(v);
+}
+function historicalValue(item){
+  if(!item)return "–";
+  return item.eenheid==="procent"
+    ? signedOne(item.mediaan)+"%"
+    : signedOne(item.mediaan)+" pp";
+}
+function historicalRange(item){
+  if(!item)return "";
+  const suffix=item.eenheid==="procent"?"%":" pp";
+  return "middelste 50%: "+signedOne(item.p25)+suffix+" tot "+signedOne(item.p75)+suffix;
+}
+function renderHistorical(w){
+  const h=w.historical||{};
+  if(!h.analogs?.length){
+    $("historicalIntro").textContent="Voor deze wijk zijn nog onvoldoende stabiele historische trajecten beschikbaar.";
+    $("historicalOutcomes").innerHTML='<div class="empty">Geen historische analogieën beschikbaar.</div>';
+    $("historicalAnalogs").innerHTML="";
+    $("historicalEvidence").innerHTML="";
+    $("historicalMethod").innerHTML="";
+    return;
+  }
+
+  const method=h.method||{};
+  const validation=h.validation||{};
+  const hold=validation.selected_analogy_holdout||{};
+  const profileOnly=validation.profile_only_holdout||{};
+  const directionBacktest=state.municipality.method?.historical_validation?.direction_backtest?.overall||{};
+
+  $("historicalIntro").textContent=
+    "We zoeken oudere Nederlandse wijksituaties met een vergelijkbare structuur én een vergelijkbare wijk-specifieke ontwikkeling. Algemene landelijke bewegingen, zoals een brede WOZ-stijging, worden eerst uitgefilterd. Daarna kijken we wat in de volgende twee jaar werkelijk gebeurde.";
+
+  const keys=["leeftijd_65_plus_pct","leeftijd_0_15_pct","gemiddelde_woz","inwoners"];
+  $("historicalOutcomes").innerHTML=keys
+    .filter(k=>h.outcomes?.[k])
+    .map(k=>{
+      const x=h.outcomes[k];
+      return '<div class="historical-outcome">'+
+        '<div class="hist-label">'+x.label+'</div>'+
+        '<div class="hist-value">'+historicalValue(x)+'</div>'+
+        '<div class="hist-range">'+historicalRange(x)+'</div>'+
+        '</div>';
+    }).join("") || '<div class="empty">Onvoldoende vergelijkbare uitkomsten.</div>';
+
+  const lbm=h.leefbaarheid;
+  $("historicalLiveability").textContent=lbm
+    ? "Leefbaarheid bij historische analogieën: mediane verandering "+signedOne(lbm.mediaan_delta)+
+      " punt; in "+fmt.pct(lbm.stabiel_of_hoger_pct)+" bleef de score ongeveer stabiel of hoger (n="+lbm.n+")."
+    : "Leefbaarheid is voor te weinig historische analogieën over beide meetjaren beschikbaar om samen te vatten.";
+
+  $("historicalAnalogs").innerHTML=h.analogs.slice(0,5).map(a=>
+    '<div class="list-item">'+
+      '<div class="rank">#'+a.rank+'</div>'+
+      '<div><div class="name">'+a.wijk_naam+'</div><div class="meta">'+trim(a.gemeente)+'</div></div>'+
+      '<div class="status">'+a.anchor_year+' → '+a.future_year+'</div>'+
+    '</div>'
+  ).join("");
+
+  const gain=validation.traject_meerwaarde_holdout_pct;
+  $("historicalEvidence").innerHTML=
+    '<div class="evidence-item"><strong>'+fmt.pct(hold.beter_dan_landelijke_trend_pct)+'</strong><span>van de wijken in de onafhankelijke holdout: nauwkeuriger dan simpelweg de landelijke trend volgen</span></div>'+
+    '<div class="evidence-item"><strong>'+(gain!=null?(gain>0?"+":"")+fmt.one(gain)+"%":"–")+'</strong><span>verschil in mediane fout ten opzichte van alleen profielmatching; de extra trajectmeerwaarde is dus bescheiden</span></div>'+
+    '<div class="evidence-item"><strong>'+fmt.integer(hold.n)+'</strong><span>wijken in de onafhankelijke toets 2022→2024; instellingen zijn eerder gekozen op 2020→2022</span></div>';
+
+  const directionWin=directionBacktest.beter_dan_landelijke_trend_pct;
+  $("historicalMethod").innerHTML=
+    '<p class="validation-note">De historische analogieën gebruiken een transparante k-nearest-neighbour methode (instance-based machine learning). Eerst blijven alleen de '+fmt.pct((method.profile_gate_pct||0)*100)+' structureel meest vergelijkbare historische toestanden over. Binnen die groep telt profiel '+fmt.pct((method.profile_weight||0)*100)+' en wijk-specifiek traject '+fmt.pct((method.trajectory_weight||0)*100)+'. De uiteindelijke samenvatting gebruikt '+fmt.integer(method.k)+' historische analogieën.</p>'+
+    '<div class="validation-callout"><strong>Waarom we de richting-peers niet als voorspelling tonen:</strong> het losse lineaire trendscenario was in de historische backtest slechts in '+fmt.pct(directionWin)+' van de gevallen nauwkeuriger dan een eenvoudige landelijke-trendbenchmark. De richting is daarom nuttig als uitlegbaar scenario, maar niet als bewezen forecast.</div>'+
+    '<p class="validation-note">'+(h.caveat||"")+'</p>';
+
+  const modest=hold.beter_dan_landelijke_trend_pct!=null && hold.beter_dan_landelijke_trend_pct<60;
+  $("historicalValidationBadge").textContent=modest?"Getoetst · bescheiden signaal":"Out-of-time getoetst";
+  $("historicalValidationBadge").className="pill"+(modest?" warn":"");
+}
+
 function compareText(current,direction,label){
   if(current==null||direction==null)return null;
   const diff=direction-current;
