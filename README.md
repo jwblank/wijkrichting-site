@@ -19,3 +19,5 @@ Publiceer vanaf de root van de `main` branch via:
 **Settings → Pages → Deploy from a branch → main → /(root)**
 
 De site gebruikt geen backend en doet geen analytisch rekenwerk in de browser.
+
+Pages refresh
