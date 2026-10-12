@@ -150,3 +150,13 @@ footer{background:#102b45;color:#cbd9e3;padding:20px 0;margin-top:30px;font-size
   .signal-rank{display:none}
 }
 @media(max-width:620px){.signal-stats{grid-template-columns:1fr}}
+
+.first-visit-context{
+  max-width:760px;
+  margin:12px 0 0;
+  padding-left:14px;
+  border-left:3px solid #cfe4e1;
+  color:var(--muted);
+  font-size:13px;
+  line-height:1.55;
+}
