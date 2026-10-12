@@ -18,12 +18,28 @@ const metricLabels={
   bijstand_pct_inwoners:"Bijstand",herkomst_buiten_nederland_pct:"Herkomst buiten Nederland",
   nationaliteitsdiversiteit:"Nationaliteitsdiversiteit"
 };
+
 function metricValue(key,v){
   if(key==="gemiddelde_woz"||key==="gemiddeld_inkomen")return fmt.euro(v);
   if(key.endsWith("_pct"))return fmt.pct(v);
   if(key==="inwoners"||key==="bevolkingsdichtheid")return fmt.integer(v);
   return v==null?"–":fmt.one(v);
 }
+function points(w,key){return w.history?.[key]||[]}
+function latestPoint(w,key){
+  const p=points(w,key); return p.length?p[p.length-1]:null;
+}
+function firstPoint(w,key){
+  const p=points(w,key); return p.length?p[0]:null;
+}
+function historyChange(w,key){
+  const a=firstPoint(w,key),b=latestPoint(w,key);
+  if(!a||!b||a.waarde==null||b.waarde==null)return null;
+  return {start:a.jaar,end:b.jaar,startValue:a.waarde,endValue:b.waarde,abs:b.waarde-a.waarde,pct:a.waarde!==0?100*(b.waarde-a.waarde)/a.waarde:null};
+}
+function trim(v){return String(v??"").trim()}
+function cleanCrimeLabel(v){return trim(v).replace(/^\d+(?:\.\d+)*\s+/,"")}
+
 async function load(){
   state.index=await fetch("data/gemeenten.json",{cache:"no-store"}).then(r=>r.json());
   $("generatedAt").textContent=fmt.date(state.index.generated_at);
@@ -42,83 +58,109 @@ async function loadMunicipality(slug){
 function getWijk(){return state.municipality.wijken.find(w=>w.wijk_code===$("district").value)||state.municipality.wijken[0];}
 function populateTrendSelect(){
   const w=getWijk();
-  const preferred=["gemiddelde_woz","inwoners","leeftijd_65_plus_pct","leeftijd_0_15_pct","koopwoningen_pct","huurwoningen_pct","eengezinswoningen_pct","gemiddeld_inkomen","herkomst_buiten_nederland_pct"];
-  const keys=preferred.filter(k=>(w.history?.[k]||[]).length>1);
+  const preferred=["gemiddelde_woz","inwoners","leeftijd_65_plus_pct","leeftijd_0_15_pct","eenpersoonshuishoudens_pct","huishoudens_met_kinderen_pct","koopwoningen_pct","huurwoningen_pct","gemiddeld_inkomen"];
+  const keys=preferred.filter(k=>points(w,k).length>1);
   $("trendMetric").innerHTML=keys.map(k=>'<option value="'+k+'">'+metricLabels[k]+'</option>').join("");
   if(keys.includes("gemiddelde_woz"))$("trendMetric").value="gemiddelde_woz";
   $("trendMetric").onchange=()=>renderTrend(w);
 }
 function render(){
+  document.querySelectorAll(".warning-box.dynamic").forEach(x=>x.remove());
   const w=getWijk();
-  $("districtTitle").textContent=w.wijk_naam+", "+w.gemeente;
-  $("districtSubtitle").textContent="Structurele wijkdata t/m "+w.latest_year+". Peers en ontwikkelrichting zijn vooraf berekend in de private analysemotor.";
-  renderFreshness(w);renderKpis(w);renderTrend(w);renderComposition(w);renderObservations(w);
+  $("districtTitle").textContent=w.wijk_naam+", "+trim(w.gemeente);
+  $("districtSubtitle").textContent="Een samenvatting van de huidige samenstelling, recente ontwikkeling en positie tussen vergelijkbare Nederlandse wijken.";
+  renderFreshness(w);renderKpis(w);renderObservations(w);renderTrend(w);renderComposition(w);
   renderLiveability(w);renderCrime(w);renderPeers(w);renderDirection(w);renderDrivers(w);
   renderOutcomes(w);renderSources(w);renderAvailability(w);
 }
 function renderFreshness(w){
   const arr=[
-    "Structuur "+w.latest_year,
+    "Wijkprofiel "+w.latest_year,
     w.leefbaarheid?.latest?.jaar?"Leefbaarheid "+w.leefbaarheid.latest.jaar:null,
     w.criminaliteit?.laatste_periode?"Veiligheid t/m "+w.criminaliteit.laatste_periode:null
   ].filter(Boolean);
   $("freshness").innerHTML=arr.map(x=>'<span class="pill">'+x+'</span>').join("");
 }
-function historyChange(w,key){
-  const p=w.history?.[key]||[];if(p.length<2)return null;
-  const a=p[0].waarde,b=p[p.length-1].waarde;if(a==null||b==null)return null;
-  return {start:p[0].jaar,end:p[p.length-1].jaar,abs:b-a,pct:a!==0?100*(b-a)/a:null};
-}
 function renderKpis(w){
-  const m=w.metrics||{},woz=historyChange(w,"gemiddelde_woz"),age=historyChange(w,"leeftijd_65_plus_pct");
-  const crime=w.criminaliteit?.laatste_12m_per_1000;
+  const m=w.metrics||{},woz=latestPoint(w,"gemiddelde_woz"),income=latestPoint(w,"gemiddeld_inkomen");
+  const age=latestPoint(w,"leeftijd_65_plus_pct"),inh=latestPoint(w,"inwoners"),crime=w.criminaliteit?.laatste_12m_per_1000;
+  const koop=latestPoint(w,"koopwoningen_pct"),single=latestPoint(w,"eengezinswoningen_pct");
   const cards=[
-    ["Inwoners",fmt.integer(m.inwoners),"CBS "+w.latest_year],
-    ["WOZ",fmt.euro(m.gemiddelde_woz),woz?.pct!=null?fmt.signedPct(woz.pct)+" sinds "+woz.start:"laatste beschikbare waarde"],
-    ["Herkomst buiten NL",fmt.pct(m.herkomst_buiten_nederland_pct),"herkomst, niet nationaliteit"],
-    ["65+",fmt.pct(m.leeftijd_65_plus_pct),age?.abs!=null?(age.abs>0?"+":"")+fmt.one(age.abs)+" pp sinds "+age.start:"leeftijdsopbouw"],
-    ["Gem. inkomen",fmt.euro(m.gemiddeld_inkomen),"laatste beschikbare CBS-waarde"],
-    ["Misdrijven / 1.000",fmt.one(crime),"rolling 12 maanden"]
+    ["Inwoners",fmt.integer(inh?.waarde??m.inwoners),inh?"CBS "+inh.jaar:"CBS "+w.latest_year],
+    ["WOZ",fmt.euro(woz?.waarde??m.gemiddelde_woz),woz?"CBS "+woz.jaar:"laatste beschikbare waarde"],
+    ["Koopwoningen",fmt.pct(koop?.waarde??m.koopwoningen_pct),single?.waarde!=null?fmt.pct(single.waarde)+" eengezins":"woningstructuur"],
+    ["65+",fmt.pct(age?.waarde??m.leeftijd_65_plus_pct),age?"CBS "+age.jaar:"leeftijdsopbouw"],
+    ["Gem. inkomen",fmt.euro(income?.waarde??m.gemiddeld_inkomen),income?"CBS "+income.jaar:"niet beschikbaar"],
+    ["Misdrijven / 1.000",fmt.one(crime),w.criminaliteit?.laatste_periode?"12 mnd t/m "+w.criminaliteit.laatste_periode:"rolling 12 maanden"]
   ];
   $("kpis").innerHTML=cards.map(x=>'<div class="kpi"><div class="k-label">'+x[0]+'</div><div class="k-value">'+x[1]+'</div><div class="k-sub">'+x[2]+'</div></div>').join("");
 }
+function buildNarrative(w){
+  const out=[];
+  const woz=historyChange(w,"gemiddelde_woz");
+  const age65=historyChange(w,"leeftijd_65_plus_pct"),age0=historyChange(w,"leeftijd_0_15_pct");
+  const single=historyChange(w,"eenpersoonshuishoudens_pct"),kids=historyChange(w,"huishoudens_met_kinderen_pct");
+  const pop=historyChange(w,"inwoners");
+  const topDriver=w.direction?.drivers?.[0];
+
+  if(woz?.pct!=null && Math.abs(woz.pct)>=10){
+    out.push("De gemiddelde WOZ-waarde steeg van "+fmt.euro(woz.startValue)+" in "+woz.start+" naar "+fmt.euro(woz.endValue)+" in "+woz.end+" ("+fmt.signedPct(woz.pct)+").");
+  }
+  if(age65 && age0 && age65.abs>1 && age0.abs<0){
+    out.push("De leeftijdsopbouw verschuift: het aandeel 65+ nam met "+fmt.one(age65.abs)+" procentpunt toe, terwijl 0–15 jaar met "+fmt.one(Math.abs(age0.abs))+" procentpunt afnam.");
+  }else if(age65 && Math.abs(age65.abs)>=1){
+    out.push("Het aandeel 65+ veranderde sinds "+age65.start+" met "+(age65.abs>0?"+":"")+fmt.one(age65.abs)+" procentpunt.");
+  }
+  if(single && kids && single.abs>1 && kids.abs<0){
+    out.push("Ook de huishoudensstructuur verandert: meer eenpersoonshuishoudens en minder huishoudens met kinderen.");
+  }
+  if(pop?.pct!=null && Math.abs(pop.pct)>=3){
+    out.push("Het aantal inwoners "+(pop.pct>0?"groeide":"daalde")+" sinds "+pop.start+" met "+fmt.one(Math.abs(pop.pct))+"%.");
+  }
+  if(topDriver){
+    const dir=topDriver.richting==="omhoog"?"omhoog":"omlaag";
+    out.push("In de ontwikkelrichting weegt "+topDriver.label.toLowerCase()+" momenteel het sterkst mee ("+dir+").");
+  }
+  return out.slice(0,4);
+}
+function renderObservations(w){
+  const o=buildNarrative(w);
+  $("observations").innerHTML=o.length?o.map(x=>'<div class="signal">'+x+'</div>').join(""):'<div class="empty">Voor deze wijk zijn nog te weinig consistente tijdreeksen beschikbaar voor een compacte duiding.</div>';
+}
 function renderTrend(w){
-  const key=$("trendMetric").value,pts=w.history?.[key]||[];
+  const key=$("trendMetric").value,pts=points(w,key);
   $("trendNote").textContent=pts.length?metricLabels[key]+" · "+pts[0].jaar+"–"+pts[pts.length-1].jaar:"Geen consistente tijdreeks beschikbaar.";
   $("trendChart").innerHTML=pts.length?svgLine(pts,key,false):'<div class="empty">Geen tijdreeks beschikbaar.</div>';
 }
-function svgLine(points,key,compact){
-  const W=560,H=compact?120:220,p=compact?24:36,vals=points.map(d=>Number(d.waarde)).filter(Number.isFinite);
+function svgLine(pointsArr,key,compact){
+  const W=560,H=compact?120:220,p=compact?24:36,vals=pointsArr.map(d=>Number(d.waarde)).filter(Number.isFinite);
   if(!vals.length)return '<div class="empty">Geen waarden.</div>';
   const min=Math.min(...vals),max=Math.max(...vals),pad=(max-min)*.12||1,lo=min-pad,hi=max+pad,range=hi-lo;
-  const coords=points.map((d,i)=>({x:p+i*(W-2*p)/Math.max(points.length-1,1),y:H-p-(d.waarde-lo)*(H-2*p)/range,...d}));
+  const coords=pointsArr.map((d,i)=>({x:p+i*(W-2*p)/Math.max(pointsArr.length-1,1),y:H-p-(d.waarde-lo)*(H-2*p)/range,...d}));
   const poly=coords.map(d=>d.x+","+d.y).join(" ");
   const labels=coords.map(d=>'<text x="'+d.x+'" y="'+(H-6)+'" text-anchor="middle" class="svg-label">'+(d.jaar??d.label??"")+'</text>'+(compact?"":'<text x="'+d.x+'" y="'+(d.y-10)+'" text-anchor="middle" class="svg-value">'+metricValue(key,d.waarde)+'</text>')+'<circle cx="'+d.x+'" cy="'+d.y+'" r="'+(compact?3:4)+'" class="dot"></circle>').join("");
   return '<svg viewBox="0 0 '+W+' '+H+'" role="img"><line x1="'+p+'" y1="'+(H-p)+'" x2="'+(W-p)+'" y2="'+(H-p)+'" class="axis"></line><polyline points="'+poly+'" class="line"></polyline>'+labels+'</svg>';
 }
 function renderComposition(w){
   const m=w.metrics||{};
+  const value=k=>latestPoint(w,k)?.waarde??m[k];
   const rows=[
-    ["0–15 jaar",m.leeftijd_0_15_pct],["65+",m.leeftijd_65_plus_pct],
-    ["Eenpersoonshuishoudens",m.eenpersoonshuishoudens_pct],["Met kinderen",m.huishoudens_met_kinderen_pct],
-    ["Koopwoningen",m.koopwoningen_pct],["Eengezinswoningen",m.eengezinswoningen_pct]
+    ["0–15 jaar",value("leeftijd_0_15_pct")],["65+",value("leeftijd_65_plus_pct")],
+    ["Eenpersoonshuishoudens",value("eenpersoonshuishoudens_pct")],["Met kinderen",value("huishoudens_met_kinderen_pct")],
+    ["Koopwoningen",value("koopwoningen_pct")],["Eengezinswoningen",value("eengezinswoningen_pct")]
   ].filter(x=>x[1]!=null);
   $("composition").innerHTML=rows.map(x=>'<div class="comp-row"><span>'+x[0]+'</span><div class="track"><div class="fill" style="width:'+Math.min(Math.max(x[1],0),100)+'%"></div></div><strong>'+fmt.pct(x[1])+'</strong></div>').join("");
-  $("compositionNote").textContent=m.herkomst_buiten_nederland_pct!=null?"Herkomst buiten Nederland: "+fmt.pct(m.herkomst_buiten_nederland_pct)+". Dit is expliciet geen nationaliteitsmaat.":"Herkomst is voor deze wijk/jaargang niet consistent beschikbaar.";
-}
-function renderObservations(w){
-  const o=w.observations||[];
-  $("observations").innerHTML=o.length?o.map(x=>'<div class="signal">'+x+'</div>').join(""):'<div class="empty">Onvoldoende consistente trends voor automatische duiding.</div>';
+  const her=value("herkomst_buiten_nederland_pct");
+  $("compositionNote").textContent=her!=null?"Herkomst buiten Nederland: "+fmt.pct(her)+". Herkomst is niet hetzelfde als nationaliteit.":"Herkomst/nationaliteit is in de gebruikte tijdreeks niet consistent genoeg beschikbaar en wordt daarom niet ingevuld.";
 }
 function renderLiveability(w){
-  const l=w.leefbaarheid||{},latest=l.latest;
+  const l=w.leefbaarheid||{},latest=l.latest,pts=(l.history||[]).map(x=>({jaar:x.jaar,waarde:x.waarde}));
   $("liveabilitySummary").innerHTML=latest?fmt.two(latest.waarde)+' <small>'+latest.klasse+'</small>':'–';
-  const pts=(l.history||[]).map(x=>({jaar:x.jaar,waarde:x.waarde}));
   $("liveabilityChart").innerHTML=pts.length?svgLine(pts,"leefbaarheid_score",true):'<div class="empty">Geen Leefbaarometerhistorie.</div>';
-  if(latest){
-    const d=l.trend_2022_2024;
-    $("liveabilityNote").textContent="Leefbaarometer "+latest.jaar+(d!=null?" · verandering 2022–2024: "+(d>0?"+":"")+fmt.two(d):"");
-  }else $("liveabilityNote").textContent="Geen wijkmatch in de gebruikte Leefbaarometerreeks.";
+  if(latest&&pts.length>1){
+    const first=pts[0];
+    $("liveabilityNote").textContent="Van "+fmt.two(first.waarde)+" in "+first.jaar+" naar "+fmt.two(latest.waarde)+" in "+latest.jaar+". Leefbaarheid wordt tweejaarlijks gemeten.";
+  }else $("liveabilityNote").textContent="Geen consistente wijkreeks beschikbaar.";
 }
 function renderCrime(w){
   const c=w.criminaliteit||{};
@@ -126,46 +168,71 @@ function renderCrime(w){
     $("crimeSummary").textContent="–";$("crimeChart").innerHTML='<div class="empty">Geen actuele wijkreeks beschikbaar.</div>';
     $("crimeCategories").innerHTML="";$("crimeNote").textContent="Bron: Politie/CBS 47022NED.";return;
   }
-  $("crimeSummary").innerHTML=fmt.one(c.laatste_12m_per_1000)+' <small>per 1.000 · laatste 12 maanden</small>';
-  const pts=(c.monthly||[]).map((x,i)=>({jaar:String(x.maand).padStart(2,"0")+"/"+String(x.jaar).slice(-2),waarde:x.aantal}));
-  $("crimeChart").innerHTML=pts.length?svgLine(pts,"inwoners",true):"";
-  $("crimeCategories").innerHTML=(c.top_categories||[]).slice(0,4).map(x=>'<div class="category-row"><span>'+x.label+'</span><strong>'+fmt.one(x.per_1000)+'/1.000</strong></div>').join("");
-  const parts=[];
-  if(c.verandering_pct!=null)parts.push("t.o.v. voorafgaande 12 maanden: "+fmt.signedPct(c.verandering_pct));
-  parts.push("geregistreerde misdrijven, niet alle feitelijke criminaliteit");
-  $("crimeNote").textContent=parts.join(" · ");
-  if(c.kleine_populatie)$("crimeNote").insertAdjacentHTML("afterend",'<div class="warning-box">Kleine wijkpopulatie: aantallen per 1.000 kunnen sterk schommelen en worden niet gebruikt in peer-gemiddelden.</div>');
+  $("crimeSummary").innerHTML=fmt.one(c.laatste_12m_per_1000)+' <small>per 1.000 inwoners</small>';
+  const cur=Number(c.laatste_12m_aantal||0),prev=Number(c.vorige_12m_aantal||0),mx=Math.max(cur,prev,1);
+  $("crimeChart").innerHTML='<div class="crime-compare">'+
+    '<div class="crime-bar-row"><span>Laatste 12 mnd</span><div class="crime-bar-track"><div class="crime-bar-fill" style="width:'+(100*cur/mx)+'%"></div></div><strong>'+fmt.integer(cur)+'</strong></div>'+
+    '<div class="crime-bar-row"><span>Vorige 12 mnd</span><div class="crime-bar-track"><div class="crime-bar-fill previous" style="width:'+(100*prev/mx)+'%"></div></div><strong>'+fmt.integer(prev)+'</strong></div>'+
+    '</div>';
+  $("crimeCategories").innerHTML=(c.top_categories||[]).slice(0,3).map(x=>'<div class="category-row"><span>'+cleanCrimeLabel(x.label)+'</span><strong>'+fmt.integer(x.aantal_12m)+'</strong></div>').join("");
+  const delta=cur-prev;
+  $("crimeNote").textContent=(delta===0?"Evenveel registraties als in de voorafgaande 12 maanden.":(Math.abs(delta)+" "+(delta>0?"meer":"minder")+" registraties dan in de voorafgaande 12 maanden."))+" Dit zijn politie-registraties, niet alle feitelijke criminaliteit.";
+  if(c.kleine_populatie){
+    $("crimeNote").insertAdjacentHTML("afterend",'<div class="warning-box dynamic">Kleine wijkpopulatie: cijfers per 1.000 inwoners kunnen sterk schommelen.</div>');
+  }else if(cur<30){
+    $("crimeNote").insertAdjacentHTML("afterend",'<div class="warning-box dynamic">Het aantal registraties is beperkt. Procentuele veranderingen kunnen daardoor groot lijken; kijk vooral naar de aantallen.</div>');
+  }
 }
 function renderPeers(w){
-  $("peers").innerHTML=(w.peers||[]).map(p=>'<div class="list-item"><div class="rank">'+p.rank+' / '+fmt.integer(p.van)+'</div><div><div class="name">'+p.wijk_naam+'</div><div class="meta">'+p.gemeente+'</div></div><div class="meta">afstand '+fmt.two(p.technische_afstand)+'</div></div>').join("");
+  $("peers").innerHTML=(w.peers||[]).map(p=>'<div class="list-item"><div class="rank">#'+p.rank+'</div><div><div class="name">'+p.wijk_naam+'</div><div class="meta">'+trim(p.gemeente)+'</div></div><div class="status">'+p.rank+' van '+fmt.integer(p.van)+'</div></div>').join("");
   const domains=w.peer_domains||{};
   $("peerDomains").innerHTML=Object.entries(domains).map(([d,fs])=>'<div class="domain-row"><strong>'+prettyDomain(d)+'</strong><span>'+fs.map(x=>x.label).join(", ")+'</span></div>').join("")||'<div class="empty">Geen domeindetails.</div>';
 }
 function prettyDomain(s){return ({demografie:"Demografie",woningstructuur:"Woningstructuur",woningmarkt:"Woningmarkt",sociaaleconomisch:"Sociaaleconomisch",bevolkingssamenstelling:"Bevolkingssamenstelling"})[s]||s;}
 function renderDirection(w){
   const rows=w.direction?.profile_shift||[],future=rows.filter(r=>r.richting_rank!=null).sort((a,b)=>a.richting_rank-b.richting_rank).slice(0,5);
-  $("direction").innerHTML=future.map(r=>'<div class="list-item"><div class="rank">'+r.richting_rank+'</div><div><div class="name">'+r.wijk_naam+'</div><div class="meta">'+r.gemeente+'</div></div><div class="status">'+r.status+'</div><div class="meta" style="grid-column:2/4">'+(r.toelichting||"")+'</div></div>').join("")||'<div class="empty">Geen robuuste richting beschikbaar.</div>';
+  $("direction").innerHTML=future.map(r=>'<div class="list-item"><div class="rank">#'+r.richting_rank+'</div><div><div class="name">'+r.wijk_naam+'</div><div class="meta">'+trim(r.gemeente)+'</div></div><div class="status">'+r.status+'</div><div class="meta" style="grid-column:2/4">'+(r.toelichting||"")+'</div></div>').join("")||'<div class="empty">Geen robuuste richting beschikbaar.</div>';
+}
+function movementLabel(v){
+  const a=Math.abs(Number(v)||0);
+  if(a>=0.5)return "sterke beweging";
+  if(a>=0.2)return "duidelijke beweging";
+  if(a>=0.1)return "lichte beweging";
+  return "vrijwel stabiel";
 }
 function renderDrivers(w){
   const d=w.direction?.drivers||[],s=w.direction?.summary||{};
-  $("drivers").innerHTML=d.slice(0,5).map(x=>'<div class="driver"><div class="driver-domain">'+(x.domein||"")+'</div><strong>'+x.label+'</strong><div class="driver-val">'+(x.geprojecteerde_beweging_sd>0?"+":"")+fmt.two(x.geprojecteerde_beweging_sd)+' SD</div><div class="driver-dir">'+x.richting+'</div></div>').join("")||'<div class="empty">Geen drivers beschikbaar.</div>';
-  $("directionStrength").textContent=s.sterkte_label?"Richting: "+s.sterkte_label:"Richting: –";
-  $("directionMeta").textContent=s.recente_periode?"Basis "+s.basisperiode+" · recente trend "+s.recente_periode+" · "+(s.aantal_domeinen||"–")+" domeinen · trendconsistentie "+fmt.pct(s.trendconsistentie_pct):"";
+  $("drivers").innerHTML=d.slice(0,5).map(x=>'<div class="driver"><div class="driver-domain">'+(x.domein||"")+'</div><strong>'+x.label+'</strong><div class="driver-val">'+(x.richting==="omhoog"?"↑":"↓")+' '+movementLabel(x.geprojecteerde_beweging_sd)+'</div><div class="driver-dir">'+x.richting+'</div><div class="driver-tech">technisch: '+(x.geprojecteerde_beweging_sd>0?"+":"")+fmt.two(x.geprojecteerde_beweging_sd)+' SD</div></div>').join("")||'<div class="empty">Geen drivers beschikbaar.</div>';
+  $("directionStrength").textContent=s.sterkte_label?"Profielbeweging: "+s.sterkte_label:"Profielbeweging: –";
+  $("directionMeta").textContent=s.recente_periode?"Gebaseerd op "+s.basisperiode+"; de recente periode "+s.recente_periode+" telt zwaarder mee. "+(s.aantal_domeinen||"–")+" inhoudelijke domeinen zijn gebruikt.":"";
+}
+function compareText(current,direction,label){
+  if(current==null||direction==null)return null;
+  const diff=direction-current;
+  if(label==="leefbaarheid"){
+    if(Math.abs(diff)<0.03)return "De gemiddelde leefbaarheid van huidige peers en richting-peers ligt vrijwel op hetzelfde niveau.";
+    return "Richting-peers hebben gemiddeld een "+(diff>0?"iets hogere":"iets lagere")+" Leefbaarometerscore dan de huidige peers.";
+  }
+  const rel=current!==0?100*diff/current:null;
+  if(rel!=null&&Math.abs(rel)<15)return "De geregistreerde criminaliteit van richting-peers ligt in dezelfde orde van grootte als bij de huidige peers.";
+  return "Richting-peers hebben gemiddeld "+(diff>0?"meer":"minder")+" geregistreerde misdrijven per 1.000 inwoners dan de huidige peers.";
 }
 function renderOutcomes(w){
   const o=w.outcomes||{},l=o.leefbaarheid||{},c=o.criminaliteit||{};
+  const texts=[compareText(l.huidige_peers,l.richting_peers,"leefbaarheid"),compareText(c.huidige_peers,c.richting_peers,"criminaliteit")].filter(Boolean);
   $("outcomes").innerHTML='<table class="outcome-table"><thead><tr><th>Uitkomst</th><th>'+w.wijk_naam+'</th><th>Huidige peers</th><th>Richting-peers</th></tr></thead><tbody>'+
     '<tr><td>Leefbaarheid</td><td>'+fmt.two(l.wijk)+'</td><td>'+fmt.two(l.huidige_peers)+' <span class="meta">(n='+fmt.integer(l.huidige_peers_n)+')</span></td><td>'+fmt.two(l.richting_peers)+' <span class="meta">(n='+fmt.integer(l.richting_peers_n)+')</span></td></tr>'+
     '<tr><td>Misdrijven / 1.000</td><td>'+fmt.one(c.wijk)+'</td><td>'+fmt.one(c.huidige_peers)+' <span class="meta">(n='+fmt.integer(c.huidige_peers_n)+')</span></td><td>'+fmt.one(c.richting_peers)+' <span class="meta">(n='+fmt.integer(c.richting_peers_n)+')</span></td></tr>'+
-    '</tbody></table><p class="note">Deze verschillen zijn context, geen causaliteit. De richting wordt bepaald zonder leefbaarheid en criminaliteit.</p>';
+    '</tbody></table>'+(texts.length?'<div class="outcome-interpretation">'+texts.join(" ")+' Dit is context bij de profielrichting, geen voorspeld gevolg.</div>':'')+
+    '<p class="note">Leefbaarheid en criminaliteit zijn niet gebruikt om de peers of ontwikkelrichting te bepalen.</p>';
 }
 function renderSources(w){
   const s=state.municipality.sources||{};
   const rows=[
-    ["Structurele wijkkenmerken",(s.structuur?.name||"CBS KWB")+" · "+(s.structuur?.latest_year||w.latest_year)],
-    ["Leefbaarheid",(s.leefbaarheid?.name||"Leefbaarometer")+" · "+(s.leefbaarheid?.latest_year||"–")],
-    ["Criminaliteit",(s.criminaliteit?.name||"Politie/CBS")+" · "+(w.criminaliteit?.laatste_periode||"laatste publicatie")],
-    ["Analyse","vooraf berekend in private engine"]
+    ["Structurele wijkkenmerken",(s.structuur?.name||"CBS KWB")+" · t/m "+(s.structuur?.latest_year||w.latest_year)],
+    ["Leefbaarheid",(s.leefbaarheid?.name||"Leefbaarometer")+" · "+(s.leefbaarheid?.latest_year||"–")+" · "+(s.leefbaarheid?.frequency||"")],
+    ["Criminaliteit",(s.criminaliteit?.name||"Politie/CBS")+" · t/m "+(w.criminaliteit?.laatste_periode||"laatste publicatie")+" · maandelijks"],
+    ["Databuild",fmt.date(state.municipality.generated_at)]
   ];
   $("sources").innerHTML=rows.map(x=>'<div class="source-row"><span>'+x[0]+'</span><span>'+x[1]+'</span></div>').join("");
   $("methodSummary").textContent=state.municipality.method?.public_summary||"";
@@ -174,6 +241,6 @@ function renderAvailability(w){
   const a=state.municipality.availability||{};
   const wanted=["gemiddelde_woz","gemiddeld_inkomen","leeftijd_0_15_pct","leeftijd_65_plus_pct","koopwoningen_pct","eengezinswoningen_pct","herkomst_buiten_nederland_pct","nationaliteitsdiversiteit"];
   const rows=wanted.filter(k=>a[k]).map(k=>'<tr><td>'+a[k].label+'</td><td>'+fmt.integer(a[k].beschikbaar_vanaf)+'</td><td>'+fmt.integer(a[k].laatste_beschikbaar)+'</td></tr>').join("");
-  $("availabilityTable").innerHTML='<table class="availability-table"><thead><tr><th>Indicator</th><th>Vanaf</th><th>Laatste jaar</th></tr></thead><tbody>'+rows+'</tbody></table>';
+  $("availabilityTable").innerHTML='<table class="availability-table"><thead><tr><th>Indicator</th><th>Beschikbaar vanaf</th><th>Laatste jaar</th></tr></thead><tbody>'+rows+'</tbody></table>';
 }
-load().catch(err=>{console.error(err);document.querySelector("main").innerHTML='<div class="card"><h2>Data kon niet worden geladen</h2><p>Controleer of de publieke databuild aanwezig is.</p></div>';});
+load().catch(err=>{console.error(err);document.querySelector("main").innerHTML='<div class="card"><h2>Data kon niet worden geladen</h2><p>De databron kon niet worden gelezen. Probeer de pagina opnieuw te laden.</p></div>';});

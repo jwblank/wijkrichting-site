@@ -11,10 +11,10 @@
   <header class="hero">
     <div class="wrap">
       <div class="eyebrow">WIJKRICHTING</div>
-      <h1>Zie hoe een wijk verandert — en welke kant het profiel op beweegt.</h1>
+      <h1>Wat verandert er in een wijk — en waar beweegt het profiel naartoe?</h1>
       <p class="hero-copy">
-        Een compacte, uitlegbare wijkanalyse op openbare data. Geen black box:
-        elke vergelijking laat zien welke kenmerken meetellen en hoe actueel de bron is.
+        WijkRichting brengt ontwikkeling, vergelijkbare wijken en actuele context samen
+        in één begrijpelijk verhaal. De berekeningen zijn statistisch onderbouwd; de uitleg blijft eenvoudig.
       </p>
     </div>
   </header>
@@ -46,6 +46,12 @@
 
     <section id="kpis" class="kpi-grid"></section>
 
+    <section class="card insight-card">
+      <div class="eyebrow dark">KERNDUiding</div>
+      <h3>Wat valt op?</h3>
+      <div id="observations" class="signal-list signal-list-large"></div>
+    </section>
+
     <section class="two-col">
       <article class="card">
         <div class="section-head">
@@ -67,13 +73,7 @@
       </article>
     </section>
 
-    <section class="three-col">
-      <article class="card">
-        <div class="eyebrow dark">SIGNALEN</div>
-        <h3>Wat valt op?</h3>
-        <div id="observations" class="signal-list"></div>
-      </article>
-
+    <section class="two-col">
       <article class="card">
         <div class="eyebrow dark">LEEFBAARHEID</div>
         <h3>Ontwikkeling Leefbaarometer</h3>
@@ -98,12 +98,13 @@
         <h3>Lijkt nu het meest op</h3>
         <p class="note">
           Rang 1 is de meest vergelijkbare wijk binnen het relevante landelijke vergelijkingsuniversum.
-          De technische afstand is een rekenmaat: 0 = identiek, zonder vaste bovengrens.
+          De rang is de hoofdmaat; technische afstanden blijven op de achtergrond.
         </p>
         <div id="peers" class="list"></div>
         <details class="method-details">
           <summary>Waarom worden deze wijken vergeleken?</summary>
           <div id="peerDomains" class="domain-list"></div>
+          <p>De technische profielafstand is 0 bij een identiek profiel en heeft geen vaste bovengrens. Daarom tonen we in de hoofdweergave de landelijke rang.</p>
         </details>
       </article>
 
@@ -122,7 +123,7 @@
       <div class="section-head">
         <div>
           <div class="eyebrow dark">UITLEGBARE RICHTING</div>
-          <h3>Waarom deze richting?</h3>
+          <h3>Welke ontwikkelingen trekken het profiel?</h3>
         </div>
         <div id="directionStrength" class="pill">–</div>
       </div>
