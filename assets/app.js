@@ -106,6 +106,38 @@ function renderFreshness(w){
 
 function buildCoreMessage(w){
   const sentences=[];
+  const s=w.signal;
+
+  // 1. Eerst de hoofdboodschap: hoeveel verandert het structurele profiel?
+  // Dit gebruikt uitsluitend het landelijke percentiel van profielbeweging,
+  // niet de algemene signaleringsrang.
+  const movementPct=Number(s?.profielbeweging_percentiel);
+  if(Number.isFinite(movementPct)){
+    let tempo;
+    if(movementPct>=90)tempo="relatief snel";
+    else if(movementPct>=75)tempo="duidelijk";
+    else if(movementPct>=40)tempo="in een gemiddeld tempo";
+    else if(movementPct>=25)tempo="relatief beperkt";
+    else tempo="langzaam";
+
+    if(tempo==="in een gemiddeld tempo"){
+      sentences.push(
+        w.wijk_naam+" verandert in een gemiddeld tempo ten opzichte van Nederlandse referentiewijken; "+
+        "de structurele profielbeweging is sterker dan bij "+fmt.one(movementPct)+"% van deze wijken."
+      );
+    }else{
+      sentences.push(
+        w.wijk_naam+" verandert "+tempo+": de structurele profielbeweging is sterker dan bij "+
+        fmt.one(movementPct)+"% van de Nederlandse referentiewijken."
+      );
+    }
+  }else{
+    sentences.push(
+      "Voor "+w.wijk_naam+" is de relatieve sterkte van de structurele profielverandering niet betrouwbaar vast te stellen."
+    );
+  }
+
+  // 2. Daarna pas de belangrijkste inhoudelijke verklaring.
   const age65=historyChange(w,"leeftijd_65_plus_pct");
   const kids=historyChange(w,"huishoudens_met_kinderen_pct");
   const age0=historyChange(w,"leeftijd_0_15_pct");
@@ -113,30 +145,19 @@ function buildCoreMessage(w){
   const top=w.direction?.drivers?.[0];
 
   if(age65?.abs>0.5 && kids?.abs<-0.5){
-    sentences.push(w.wijk_naam+" verandert vooral door vergrijzing en een afnemend aandeel huishoudens met kinderen.");
+    sentences.push("De verandering wordt vooral gedreven door vergrijzing en een afnemend aandeel huishoudens met kinderen.");
   }else if(age65?.abs>0.5 && age0?.abs<-0.5){
-    sentences.push(w.wijk_naam+" verandert vooral door vergrijzing en een afnemend aandeel kinderen.");
+    sentences.push("De verandering wordt vooral gedreven door vergrijzing en een afnemend aandeel kinderen.");
   }else if(single?.abs>0.75 && kids?.abs<-0.5){
-    sentences.push(w.wijk_naam+" verandert vooral door een groeiend aandeel eenpersoonshuishoudens en een afnemend aandeel huishoudens met kinderen.");
+    sentences.push("De verandering wordt vooral gedreven door een groeiend aandeel eenpersoonshuishoudens en een afnemend aandeel huishoudens met kinderen.");
   }else if(top){
     const dir=top.richting==="omhoog"?"toename":"afname";
-    sentences.push("De belangrijkste structurele beweging in "+w.wijk_naam+" is de "+dir+" van "+top.label.toLowerCase()+".");
+    sentences.push("De belangrijkste structurele bijdrage is de "+dir+" van "+top.label.toLowerCase()+".");
   }else{
-    sentences.push("Voor "+w.wijk_naam+" is geen dominante structurele verandering vastgesteld.");
+    sentences.push("Er is geen afzonderlijk kenmerk dat de profielverandering duidelijk domineert.");
   }
 
-  const s=w.signal;
-  if(s){
-    const p=Number(s.signaal_percentiel);
-    if(s.primair_signaal==="afwijkende ontwikkeling t.o.v. peers"){
-      sentences.push("De recente ontwikkeling wijkt sterker af van structureel vergelijkbare wijken dan bij "+fmt.one(p)+"% van de landelijke referentiewijken.");
-    }else if(s.primair_signaal==="sterke profielbeweging"){
-      sentences.push("De omvang van de profielverandering is groter dan bij "+fmt.one(p)+"% van de landelijke referentiewijken.");
-    }else if(s.primair_signaal==="weinig historisch precedent"){
-      sentences.push("Voor dit ontwikkelpatroon zijn relatief weinig sterke historische vergelijkingsgevallen beschikbaar; de historische zeldzaamheid is groter dan bij "+fmt.one(p)+"% van de landelijke referentiewijken.");
-    }
-  }
-
+  // 3. Afsluiten met empirische historische context.
   const rel=w.historical?.relative_outcomes||{};
   const lbm=w.historical?.leefbaarheid;
   const hist=[];
@@ -172,12 +193,10 @@ function renderCoreMessage(w){
 
   const s=w.signal;
   if(s){
-    let title="Landelijke vergelijking";
-    let value="";
-    if(s.primair_signaal==="weinig historisch precedent")value="Minder historisch precedent dan bij "+fmt.one(s.signaal_percentiel)+"%";
-    else if(s.primair_signaal==="sterke profielbeweging")value="Sterkere profielbeweging dan bij "+fmt.one(s.signaal_percentiel)+"%";
-    else value="Grotere peer-afwijking dan bij "+fmt.one(s.signaal_percentiel)+"%";
-    evidence.push([title,value]);
+    const movementPct=Number(s.profielbeweging_percentiel);
+    if(Number.isFinite(movementPct)){
+      evidence.push(["Tempo profielverandering","Sterker dan bij "+fmt.one(movementPct)+"% van landelijke referentiewijken"]);
+    }
   }
 
   const n=w.historical?.analogs?.length;
