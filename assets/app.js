@@ -344,11 +344,23 @@ function renderHistorical(w){
   $("historicalValidationBadge").className="pill"+(modest?" warn":"");
 }
 
+function liveabilityBand(score){
+  if(score==null)return "";
+  if(score<3.67)return "zeer onvoldoende (lager dan 3,67)";
+  if(score<3.74)return "ruim onvoldoende (3,67–3,74)";
+  if(score<3.81)return "onvoldoende (3,74–3,81)";
+  if(score<3.93)return "zwak (3,81–3,93)";
+  if(score<3.99)return "voldoende (3,93–3,99)";
+  if(score<4.11)return "ruim voldoende (3,99–4,11)";
+  if(score<4.19)return "goed (4,11–4,19)";
+  if(score<4.27)return "zeer goed (4,19–4,27)";
+  return "uitstekend (4,27 of hoger)";
+}
 function renderLiveability(w){
   const l=w.leefbaarheid||{},latest=l.latest,pts=(l.history||[]).map(x=>({jaar:x.jaar,waarde:x.waarde}));
   $("liveabilitySummary").innerHTML=latest?fmt.two(latest.waarde)+' <small>'+latest.klasse+'</small>':'–';
   $("liveabilityReference").innerHTML=latest
-    ?'<strong>Interpretatie via klasse: '+latest.klasse+'.</strong> Leefbaarometer 3.0 gebruikt negen klassen van zeer onvoldoende tot uitstekend. De score is geen 0–10-schaal en heeft zonder klasse geen zelfstandige betekenis. De middelste landelijke score ligt rond 4,11.'
+    ?'<strong>'+fmt.two(latest.waarde)+' valt in de klasse '+liveabilityBand(latest.waarde)+'.</strong> Leefbaarometer 3.0 gebruikt negen klassen. De score is geen 0–10-schaal; de klasse geeft de betekenis. Rond 4,11 ligt de grens tussen ruim voldoende en goed.'
     :"";
   $("liveabilityChart").innerHTML=pts.length?svgLine(pts,"leefbaarheid_score",true):'<div class="empty">Geen Leefbaarometerhistorie.</div>';
   if(latest&&pts.length>1){
@@ -469,7 +481,7 @@ function renderMunicipalitySignals(){
       populateTrendSelect();
       render();
       renderMunicipalitySignals();
-      $("#wijkProfileTop")?.scrollIntoView({behavior:"smooth",block:"start"});
+      $("wijkProfileTop")?.scrollIntoView({behavior:"smooth",block:"start"});
     };
   });
 
