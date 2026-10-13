@@ -185,7 +185,7 @@ function renderCoreMessage(w){
   const age65=historyChange(w,"leeftijd_65_plus_pct");
   const kids=historyChange(w,"huishoudens_met_kinderen_pct");
   if(age65){
-    evidence.push(["Structurele ontwikkeling","65+ "+signedOne(age65.abs)+" pp sinds "+fmt.year(age65.start)]);
+    evidence.push(["Leeftijdsopbouw","Aandeel inwoners van 65 jaar en ouder "+signedOne(age65.abs)+" procentpunt sinds "+fmt.year(age65.start)]);
   }
   if(kids){
     evidence.push(["Huishoudens","Met kinderen "+signedOne(kids.abs)+" pp sinds "+fmt.year(kids.start)]);
