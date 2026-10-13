@@ -160,3 +160,77 @@ footer{background:#102b45;color:#cbd9e3;padding:20px 0;margin-top:30px;font-size
   font-size:13px;
   line-height:1.55;
 }
+
+
+/* Message-first v3 */
+.card h3,.section-intro h3,.historical-card h4{text-transform:uppercase;letter-spacing:.025em}
+.eyebrow{text-transform:uppercase}
+.section-intro{margin:30px 2px 12px}
+.section-intro h3{margin:4px 0 5px;color:var(--navy)}
+.section-intro p{max-width:850px;margin:0;color:var(--muted);font-size:13px;line-height:1.5}
+
+.conclusion-card{
+  margin-bottom:18px;
+  border-left:5px solid var(--teal);
+  background:linear-gradient(90deg,#f2faf8 0,#fff 62%);
+}
+.core-message{
+  max-width:980px;
+  margin:8px 0 18px;
+  color:var(--navy);
+  font-size:21px;
+  line-height:1.55;
+  font-weight:650;
+  letter-spacing:-.01em;
+}
+.core-evidence{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.core-evidence-item{padding:12px 13px;background:#fff;border:1px solid #dfe8ed;border-radius:11px}
+.core-evidence-item span{display:block;color:var(--muted);font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px}
+.core-evidence-item strong{display:block;color:var(--navy);font-size:13px;line-height:1.35}
+
+.reference-note{margin:10px 0 6px;padding:11px 12px;background:#f7fafb;border:1px solid #e2e9ee;border-radius:10px;color:var(--muted);font-size:12px;line-height:1.5}
+.reference-note strong{color:var(--navy)}
+.align-left{text-align:left}
+
+.crime-chart-left{margin:12px 0}
+.crime-compare{display:grid;gap:12px}
+.crime-period{display:grid;grid-template-columns:minmax(190px,1.2fr) 1fr auto;gap:12px;align-items:center;text-align:left}
+.crime-period>div:first-child{display:flex;flex-direction:column;gap:2px}
+.crime-period>div:first-child strong{font-size:12px;color:var(--navy)}
+.crime-period>div:first-child span{font-size:10px;color:var(--muted)}
+.crime-period>strong{font-size:12px;color:var(--navy);white-space:nowrap}
+
+.list-explanation{grid-column:2/4;line-height:1.4;margin-top:-5px}
+.context-card{margin-bottom:18px}
+.secondary-section{margin-top:18px}
+
+.signal-overview-row{
+  width:100%;
+  border:0;
+  border-top:1px solid #e8eef2;
+  background:transparent;
+  font:inherit;
+  color:inherit;
+  text-align:left;
+  grid-template-columns:minmax(180px,1fr) minmax(280px,1.6fr) auto;
+}
+.signal-overview-row:first-child{border-top:0}
+.signal-overview-row:focus-visible{outline:2px solid var(--teal);outline-offset:2px}
+.signal-comparison{font-size:11px;color:var(--muted);margin-top:3px;line-height:1.35}
+.signal-top{font-size:11px;font-weight:800;color:#246a65;background:var(--teal-soft);padding:6px 9px;border-radius:999px;white-space:nowrap}
+.signal-context{margin-top:4px}
+
+.historical-card{margin-top:18px}
+.summary-number{justify-content:flex-start}
+
+@media(max-width:950px){
+  .core-evidence{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .crime-period{grid-template-columns:1fr auto}
+  .crime-period .crime-bar-track{grid-column:1/3}
+}
+@media(max-width:700px){
+  .core-message{font-size:18px}
+  .core-evidence{grid-template-columns:1fr}
+  .signal-overview-row{grid-template-columns:1fr auto}
+  .signal-overview-row>div:nth-child(2){grid-column:1/3}
+}
