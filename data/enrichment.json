@@ -1,9 +1,0 @@
-{
-  "WK048906":{
-    "woz_change":"+70% sinds 2018",
-    "herkomst_buiten_nl":16.0,
-    "leefbaarheid":{"waarde":4.26,"klasse":"zeer goed","jaar":2024},
-    "criminaliteit":{"per_1000":10.6,"jaar":2025,"trend":[22,14,18]},
-    "outcomes":{"leefbaarheid":{"wijk":4.26,"huidige_peers":4.17,"richting_peers":4.26},"criminaliteit":{"wijk":10.6,"huidige_peers":15.0,"richting_peers":30.8},"toelichting":"Deze uitkomsten sturen de peerselectie niet. De publieke demo gebruikt ze uitsluitend als context bij de structurele profielverschuiving."}
-  }
-}
