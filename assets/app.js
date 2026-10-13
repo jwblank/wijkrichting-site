@@ -46,6 +46,9 @@ async function load(){
   $("generatedAt").textContent=fmt.date(state.index.generated_at);
   const s=$("municipality");
   s.innerHTML=state.index.municipalities.map(m=>'<option value="'+m.slug+'">'+m.name+'</option>').join("");
+  if(state.index.default_slug && state.index.municipalities.some(m=>m.slug===state.index.default_slug)){
+    s.value=state.index.default_slug;
+  }
   s.onchange=()=>loadMunicipality(s.value);
   await loadMunicipality(s.value);
 }
