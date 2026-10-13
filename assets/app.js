@@ -178,7 +178,19 @@ function buildCoreMessage(w){
   return sentences.slice(0,3);
 }
 
+function coreTitle(w){
+  const movementPct=Number(w.signal?.profielbeweging_percentiel);
+  if(!Number.isFinite(movementPct)) return w.wijk_naam+" verandert van profiel";
+
+  if(movementPct>=90) return w.wijk_naam+" verandert relatief snel";
+  if(movementPct>=75) return w.wijk_naam+" verandert duidelijk";
+  if(movementPct>=40) return w.wijk_naam+" verandert in een gemiddeld tempo";
+  if(movementPct>=25) return w.wijk_naam+" verandert relatief beperkt";
+  return w.wijk_naam+" verandert langzaam";
+}
+
 function renderCoreMessage(w){
+  $("coreTitle").textContent=coreTitle(w);
   $("coreMessage").textContent=buildCoreMessage(w).join(" ");
 
   const evidence=[];
