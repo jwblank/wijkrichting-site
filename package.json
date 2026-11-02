@@ -1,0 +1,9 @@
+{
+  "name": "wijkrichting-site",
+  "version": "2.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "check": "node --check assets/app.js && node --test tests/site.test.mjs"
+  }
+}

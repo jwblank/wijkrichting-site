@@ -26,6 +26,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Validate public data and interface
+        run: npm run check
+
       - name: Configure Pages
         uses: actions/configure-pages@v5
 

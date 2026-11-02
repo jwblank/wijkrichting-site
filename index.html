@@ -3,239 +3,168 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="WijkRichting duidt structurele wijkverandering met vergelijkbare wijken, historische trajecten en openbare data.">
-  <title>WijkRichting</title>
-  <link rel="stylesheet" href="assets/style.css?v=20261013-1">
+  <meta name="description" content="Ontdek waar een wijk naartoe beweegt en wat vergelijkbare wijken ons uit het verleden leren.">
+  <meta name="theme-color" content="#102f2b">
+  <title>WijkRichting · historische wijk-tweelingen</title>
+  <link rel="stylesheet" href="assets/style.css?v=20261102-1">
 </head>
 <body>
-  <header class="hero">
-    <div class="wrap">
-      <div class="eyebrow">WIJKRICHTING</div>
-      <h1>Welke structurele verandering is zichtbaar in een wijk?</h1>
-      <p class="hero-copy">
-        WijkRichting combineert actuele wijkkenmerken, structureel vergelijkbare wijken en historische
-        ontwikkelpatronen. De kern staat voorop; de statistische onderbouwing volgt daaronder.
-      </p>
+  <a class="skip-link" href="#resultaat">Naar het wijkbeeld</a>
+
+  <header class="site-header">
+    <div class="shell header-inner">
+      <a class="wordmark" href="./" aria-label="WijkRichting startpagina">
+        <span class="wordmark-mark" aria-hidden="true">WR</span>
+        <span>WijkRichting</span>
+      </a>
+      <div class="build-status"><span aria-hidden="true"></span> Open onderzoeksproduct</div>
     </div>
   </header>
 
-  <main class="wrap main">
-    <section class="selector-panel card">
-      <div>
-        <label for="municipality">Gemeente</label>
-        <select id="municipality"></select>
+  <main>
+    <section class="hero shell" aria-labelledby="page-title">
+      <div class="hero-copy">
+        <p class="kicker">Wijken vergelijken door de tijd</p>
+        <h1 id="page-title">Ontdek waar een wijk naartoe beweegt.</h1>
+        <p>En wat vergelijkbare wijken ons uit het verleden leren.</p>
       </div>
-      <div>
-        <label for="district">Wijk</label>
-        <select id="district"></select>
-      </div>
-      <div class="update-block">
-        <span class="label">Laatste databuild</span>
-        <strong id="generatedAt">–</strong>
-      </div>
+
+      <form class="finder" id="finder" aria-label="Kies een wijk">
+        <div class="field">
+          <label for="municipality">Gemeente</label>
+          <select id="municipality" name="gemeente" autocomplete="address-level2"></select>
+        </div>
+        <div class="field field-wide">
+          <label for="district">Wijk</label>
+          <select id="district" name="wijk"></select>
+        </div>
+        <button class="share-button" id="shareButton" type="button" aria-label="Kopieer link naar deze wijk">
+          <span aria-hidden="true">↗</span> Deel dit wijkbeeld
+        </button>
+      </form>
+      <p class="finder-note" id="finderNote" aria-live="polite"></p>
     </section>
 
-    <section id="wijkProfileTop" class="intro-row">
-      <div>
-        <div class="eyebrow dark">GESELECTEERDE WIJK</div>
-        <h2 id="districtTitle">–</h2>
-        <p id="districtSubtitle" class="muted">
-          Actuele positie, structurele ontwikkeling en historische context.
-        </p>
-      </div>
-      <div id="freshness" class="freshness"></div>
-    </section>
-
-    <section class="card conclusion-card">
-      <h3 id="coreTitle">–</h3>
-      <p id="coreMessage" class="core-message">–</p>
-      <div id="coreEvidence" class="core-evidence"></div>
-    </section>
-
-    <section id="kpis" class="kpi-grid"></section>
-
-    <section class="section-intro">
-      <div class="eyebrow dark">ONDERBOUWING</div>
-      <h3>Wat verandert er structureel?</h3>
-      <p>De onderstaande onderdelen onderbouwen het kernbeeld met trends, samenstelling en de belangrijkste drijvende kenmerken.</p>
-    </section>
-
-    <section class="two-col">
-      <article class="card">
-        <div class="section-head">
+    <div class="result-shell" id="resultaat">
+      <div class="shell">
+        <div class="place-line">
           <div>
-            <div class="eyebrow dark">ONTWIKKELING</div>
-            <h3>Trend per indicator</h3>
+            <p class="overline">Geselecteerde wijk</p>
+            <h2 id="districtTitle">Wijk laden…</h2>
           </div>
-          <select id="trendMetric" class="small-select"></select>
+          <div class="freshness" id="freshness"></div>
         </div>
-        <div id="trendChart" class="chart"></div>
-        <p id="trendNote" class="note"></p>
-      </article>
 
-      <article class="card">
-        <div class="eyebrow dark">SAMENSTELLING</div>
-        <h3>Huidig wijkprofiel</h3>
-        <div id="composition" class="composition"></div>
-        <p id="compositionNote" class="note"></p>
-      </article>
-    </section>
+        <section class="panel core-panel" aria-labelledby="coreTitle">
+          <div class="section-number" aria-hidden="true">01</div>
+          <div class="core-copy">
+            <p class="overline">Het kernbeeld</p>
+            <h3 id="coreTitle">Analyse laden…</h3>
+            <p class="lead" id="coreMessage"></p>
+          </div>
+          <div class="signal-grid" id="signalGrid" aria-label="Belangrijkste signalen"></div>
+        </section>
 
-    <section class="card">
-      <div class="section-head">
-        <div>
-          <div class="eyebrow dark">DRIJVENDE KENMERKEN</div>
-          <h3>Welke veranderingen trekken het profiel?</h3>
-        </div>
-        <div id="directionStrength" class="pill">–</div>
+        <section class="panel direction-panel" aria-labelledby="directionTitle">
+          <div class="section-number" aria-hidden="true">02</div>
+          <div class="section-heading">
+            <div>
+              <p class="overline">De ontwikkelrichting</p>
+              <h3 id="directionTitle">Wat valt op ten opzichte van vergelijkbare wijken?</h3>
+            </div>
+            <p id="directionIntro">Alleen robuuste, peer-relative signalen krijgen nadruk.</p>
+          </div>
+
+          <div class="direction-layout">
+            <div class="trajectory-card">
+              <div class="chart-heading">
+                <div>
+                  <span>Werkelijke ontwikkeling</span>
+                  <strong id="trajectoryTitle">–</strong>
+                </div>
+                <span class="chart-unit" id="trajectoryUnit"></span>
+              </div>
+              <div id="trajectoryChart" class="trajectory-chart"></div>
+              <p class="chart-note" id="trajectoryNote"></p>
+            </div>
+
+            <div class="peer-card">
+              <div class="chart-heading">
+                <div>
+                  <span>Landelijke positie</span>
+                  <strong>Afwijking van peers</strong>
+                </div>
+                <span class="legend-dot">percentiel</span>
+              </div>
+              <div id="peerSignals" class="peer-signals"></div>
+              <p class="chart-note">Percentielen vergelijken de wijk met landelijke referentiewijken. Ze zijn geen kans of risicoscore.</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel mirror-panel" aria-labelledby="mirrorTitle">
+          <div class="section-number" aria-hidden="true">03</div>
+          <div class="section-heading mirror-heading">
+            <div>
+              <p class="overline">De historische spiegel</p>
+              <h3 id="mirrorTitle">Wat gebeurde daarna met historische wijk-tweelingen?</h3>
+            </div>
+            <div class="sample-pill" id="historicalSample">–</div>
+          </div>
+
+          <p class="mirror-intro" id="historicalIntro"></p>
+
+          <div class="mirror-layout">
+            <div>
+              <div id="mirrorChart" class="mirror-chart"></div>
+              <div class="mirror-legend" aria-hidden="true">
+                <span><i class="range-key"></i> middelste 50%</span>
+                <span><i class="median-key"></i> mediaan</span>
+                <span><i class="zero-key"></i> landelijke ontwikkeling</span>
+              </div>
+            </div>
+            <aside class="twin-list-wrap" aria-labelledby="twinsTitle">
+              <div class="chart-heading">
+                <div>
+                  <span>Beste matches</span>
+                  <strong id="twinsTitle">Historische wijk-tweelingen</strong>
+                </div>
+              </div>
+              <ol class="twin-list" id="historicalTwins"></ol>
+            </aside>
+          </div>
+
+          <div class="validation-strip" id="validationStrip"></div>
+        </section>
+
+        <section class="method" aria-labelledby="methodTitle">
+          <div class="method-title">
+            <p class="overline">Methode & verantwoording</p>
+            <h3 id="methodTitle">Sterke data science, zonder spectaculaire claims.</h3>
+          </div>
+          <div class="method-grid" id="methodGrid"></div>
+          <details>
+            <summary>Hoe werkt de vergelijking precies?</summary>
+            <div class="method-detail" id="methodDetail"></div>
+          </details>
+        </section>
       </div>
-      <p id="directionMeta" class="note"></p>
-      <div id="drivers" class="driver-grid"></div>
-    </section>
-
-    <section class="section-intro">
-      <div class="eyebrow dark">VERGELIJKING</div>
-      <h3>Vergeleken met welke wijken?</h3>
-      <p>De huidige peer-groep geeft een structurele referentie. Het trendscenario laat afzonderlijk zien welke huidige wijkprofielen meer vergelijkbaar worden als de recente ontwikkeling doorzet.</p>
-    </section>
-
-    <section class="two-col">
-      <article class="card">
-        <div class="eyebrow dark">HUIDIGE VERGELIJKINGSWIJKEN</div>
-        <h3>Welke wijken lijken nu het meest?</h3>
-        <p class="note">De rang is gebaseerd op structurele kenmerken. Rang 1 is de meest vergelijkbare wijk binnen het landelijke vergelijkingsuniversum.</p>
-        <div id="peers" class="list"></div>
-        <details class="method-details">
-          <summary>Waarom zijn deze wijken vergelijkbaar?</summary>
-          <div id="peerDomains" class="domain-list"></div>
-          <p>De vergelijking gebruikt meerdere inhoudelijke domeinen die ieder gelijk meetellen.</p>
-        </details>
-      </article>
-
-      <article class="card accent-card">
-        <div class="eyebrow dark">TRENDSSCENARIO</div>
-        <h3>Welke huidige wijkprofielen worden meer vergelijkbaar?</h3>
-        <p class="note">
-          Dit scenario trekt de recente structurele ontwikkeling door. Het is geen forecast, maar een uitlegbare verkenning van de richting waarin het profiel beweegt.
-        </p>
-        <div id="direction" class="list"></div>
-      </article>
-    </section>
-
-    <section class="card historical-card">
-      <div class="section-head">
-        <div>
-          <div class="eyebrow dark">HISTORISCHE VERGELIJKING</div>
-          <h3>Welke wijken maakten eerder een vergelijkbare ontwikkeling door?</h3>
-        </div>
-        <div id="historicalValidationBadge" class="pill">Out-of-time getoetst</div>
-      </div>
-      <p id="historicalIntro" class="note"></p>
-
-      <div class="historical-layout">
-        <div>
-          <h4>Wat gebeurde in de twee jaar daarna?</h4>
-          <div id="historicalOutcomes" class="historical-outcomes"></div>
-          <p id="historicalLiveability" class="note"></p>
-        </div>
-        <div>
-          <h4>Meest vergelijkbare historische trajecten</h4>
-          <div id="historicalAnalogs" class="list"></div>
-        </div>
-      </div>
-
-      <div id="historicalEvidence" class="evidence-strip"></div>
-
-      <details class="method-details">
-        <summary>Statistische toets en beperkingen</summary>
-        <div id="historicalMethod"></div>
-      </details>
-    </section>
-
-    <section class="section-intro">
-      <div class="eyebrow dark">AANVULLENDE CONTEXT</div>
-      <h3>Leefbaarheid en veiligheid</h3>
-      <p>Deze uitkomsten bepalen de structurele matching niet en worden afzonderlijk als context getoond.</p>
-    </section>
-
-    <section class="two-col">
-      <article class="card">
-        <div class="eyebrow dark">LEEFBAARHEID</div>
-        <h3>Leefbaarometer</h3>
-        <div id="liveabilitySummary" class="summary-number align-left"></div>
-        <div id="liveabilityReference" class="reference-note"></div>
-        <div id="liveabilityChart" class="mini-chart"></div>
-        <p id="liveabilityNote" class="note"></p>
-      </article>
-
-      <article class="card">
-        <div class="eyebrow dark">VEILIGHEID</div>
-        <h3>Geregistreerde criminaliteit</h3>
-        <div id="crimeSummary" class="summary-number align-left"></div>
-        <div id="crimeChart" class="crime-chart-left"></div>
-        <div id="crimeCategories" class="category-list"></div>
-        <p id="crimeNote" class="note"></p>
-      </article>
-    </section>
-
-    <section class="card context-card">
-      <div class="eyebrow dark">CONTEXT BIJ HET TRENDSSCENARIO</div>
-      <h3>Leefbaarheid en veiligheid bij vergelijkingsgroepen</h3>
-      <p class="note">Deze vergelijking beschrijft de huidige situatie van peer-groepen. Het is geen voorspeld gevolg van de profielontwikkeling.</p>
-      <div id="outcomes"></div>
-    </section>
-
-    <section id="municipalitySignals" class="card municipality-signals">
-      <div class="section-head">
-        <div>
-          <div class="eyebrow dark">GEMEENTEOVERZICHT</div>
-          <h3 id="signalTitle">Welke andere wijken vallen op?</h3>
-          <p id="signalIntro" class="note"></p>
-        </div>
-        <div id="signalReference" class="pill">–</div>
-      </div>
-      <div id="signalStats" class="signal-stats"></div>
-      <div id="signalRows" class="signal-overview-list"></div>
-      <details class="method-details">
-        <summary>Betekenis van de signalering</summary>
-        <p id="signalMethod"></p>
-      </details>
-    </section>
-
-    <section class="two-col secondary-section">
-      <article class="card">
-        <div class="eyebrow dark">ACTUALITEIT & BRONNEN</div>
-        <h3>Bronnen en peildata</h3>
-        <div id="sources" class="source-list"></div>
-        <details class="method-details">
-          <summary>Methodiek in gewone taal</summary>
-          <p id="methodSummary"></p>
-        </details>
-      </article>
-
-      <article class="card data-quality-card">
-        <div class="eyebrow dark">DATAKWALITEIT</div>
-        <h3>Beschikbaarheid per indicator</h3>
-        <p class="note">Alleen daadwerkelijk beschikbare meetjaren worden getoond.</p>
-        <div id="availabilityTable"></div>
-      </article>
-    </section>
-
-    <section class="method-banner">
-      <strong>Interpretatie</strong>
-      <p>
-        WijkRichting beschrijft actuele patronen, een trendscenario en historische analogieën. Alleen de historische analogielaag is out-of-time getoetst. De uitkomsten zijn geen causale voorspellingen.
-      </p>
-    </section>
+    </div>
   </main>
 
   <footer>
-    <div class="wrap footer-inner">
-      <span>WijkRichting · publieke demo</span>
-      <span>Vooraf berekende analyse op openbare bronnen</span>
+    <div class="shell footer-inner">
+      <div>
+        <strong>WijkRichting</strong>
+        <span>Een compact onderzoeksproduct op openbare wijkdata.</span>
+      </div>
+      <div class="footer-meta">
+        <span id="generatedAt"></span>
+        <span>CBS · Leefbaarometer · Politie/CBS</span>
+      </div>
     </div>
   </footer>
 
-  <script src="assets/app.js?v=20261013-1"></script>
+  <script src="assets/app.js?v=20261102-1"></script>
 </body>
 </html>
