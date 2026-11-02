@@ -1,8 +1,9 @@
-const state = { index: null, municipality: null };
+const state = { index: null, municipality: null, selectedMetric: null };
 const $ = (id) => document.getElementById(id);
 
 const fmt = {
   one: (value) => value == null ? "–" : new Intl.NumberFormat("nl-NL", { minimumFractionDigits: 1, maximumFractionDigits: 1 }).format(value),
+  two: (value) => value == null ? "–" : new Intl.NumberFormat("nl-NL", { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(value),
   integer: (value) => value == null ? "–" : new Intl.NumberFormat("nl-NL", { maximumFractionDigits: 0 }).format(value),
   date: (value) => value ? new Date(value).toLocaleDateString("nl-NL", { day: "numeric", month: "long", year: "numeric" }) : "–",
   signed: (value) => value == null ? "–" : `${value > 0 ? "+" : ""}${new Intl.NumberFormat("nl-NL", { maximumFractionDigits: 1 }).format(value)}`
@@ -21,6 +22,13 @@ const metricLabels = {
   koopwoningen_pct: "Koopwoningen",
   eengezinswoningen_pct: "Eengezinswoningen",
   bijstand_pct_inwoners: "Inwoners met bijstand"
+};
+
+const domainLabels = {
+  demografie: "leeftijd en huishoudens",
+  woningstructuur: "woningtype en dichtheid",
+  woningmarkt: "woningwaarde",
+  sociaaleconomisch: "sociaaleconomisch profiel"
 };
 
 const escapeHtml = (value) => String(value ?? "")
@@ -67,14 +75,6 @@ function metricDelta(key, value) {
   if (key === "gemiddelde_woz" || key === "gemiddeld_inkomen") return `€ ${fmt.integer(absolute)}`;
   if (key === "inwoners" || key === "bevolkingsdichtheid") return fmt.integer(absolute);
   return `${fmt.one(absolute)} procentpunt`;
-}
-
-function percentileLabel(value) {
-  if (!Number.isFinite(Number(value))) return "onbekend";
-  if (value >= 90) return "zeer opvallend";
-  if (value >= 75) return "opvallend";
-  if (value >= 40) return "niet uitzonderlijk";
-  return "relatief beperkt";
 }
 
 function getSelectedWijk() {
@@ -178,19 +178,19 @@ function percentileSignals(wijk) {
     {
       key: "peer",
       score: Number(signal.peer_afwijking_percentiel),
-      title: "Ontwikkeling versus peers",
+      title: "Anders dan vergelijkbare wijken",
       text: "De recente ontwikkeling wijkt af van structureel vergelijkbare wijken."
     },
     {
       key: "movement",
       score: Number(signal.profielbeweging_percentiel),
-      title: "Tempo profielverandering",
+      title: "Tempo van verandering",
       text: "Het totale wijkprofiel beweegt sterker dan bij veel referentiewijken."
     },
     {
       key: "history",
       score: Number(signal.historische_zeldzaamheid_percentiel),
-      title: "Historisch precedent",
+      title: "Weinig historische voorbeelden",
       text: "Er zijn relatief weinig zeer vergelijkbare historische situaties."
     }
   ].filter((item) => Number.isFinite(item.score));
@@ -199,15 +199,13 @@ function percentileSignals(wijk) {
 function buildCore(wijk) {
   const signals = percentileSignals(wijk).sort((a, b) => b.score - a.score);
   const strongest = signals[0];
-  const topDriver = wijk.direction?.drivers?.find((driver) => metricHistory(wijk, driver.indicator).length >= 2);
-  const driverChange = topDriver ? historyChange(wijk, topDriver.indicator) : null;
+  const selectedDrivers = selectMetricDrivers(wijk);
 
   if (!signals.length) {
     return {
       title: `Voor ${wijk.wijk_naam} is geen betrouwbare peer-vergelijking beschikbaar.`,
       message: "De beschikbare historie of vergelijkbaarheid is onvoldoende. WijkRichting toont daarom geen ontwikkelsignaal en vult ontbrekende uitkomsten niet in.",
-      signals,
-      topDriver
+      signals
     };
   }
 
@@ -218,10 +216,19 @@ function buildCore(wijk) {
   if (strongest?.score >= 75 && strongest?.score < 90) title = `${wijk.wijk_naam} laat een duidelijke, maar niet uitzonderlijke beweging zien.`;
 
   const sentences = [];
-  if (topDriver && driverChange) {
-    const direction = driverChange.absolute >= 0 ? "steeg" : "daalde";
-    sentences.push(`${metricLabels[topDriver.indicator] || topDriver.label} ${direction} sinds ${driverChange.startYear} met ${metricDelta(topDriver.indicator, driverChange.absolute)}.`);
-  }
+  const meaningfulDrivers = selectedDrivers.filter((driver) => {
+    const change = historyChange(wijk, driver.indicator);
+    if (!change) return false;
+    const threshold = metricUnit(driver.indicator) === "procent" ? 0.1 : 1;
+    return Math.abs(change.absolute) >= threshold;
+  });
+  meaningfulDrivers.slice(0, 2).forEach((driver) => {
+    const change = historyChange(wijk, driver.indicator);
+    if (!change) return;
+    const direction = change.absolute > 0 ? "steeg" : change.absolute < 0 ? "daalde" : "bleef gelijk";
+    const amount = change.absolute === 0 ? "" : ` met ${metricDelta(driver.indicator, change.absolute)}`;
+    sentences.push(`${metricLabels[driver.indicator] || driver.label} ${direction} sinds ${change.startYear}${amount}.`);
+  });
 
   const historicalOutcomes = Object.values(wijk.historical?.relative_outcomes || {})
     .filter((item) => Number.isFinite(item.mediaan_tov_landelijk) && Number.isFinite(item.p25_tov_landelijk) && Number.isFinite(item.p75_tov_landelijk))
@@ -234,7 +241,7 @@ function buildCore(wijk) {
     sentences.push("Historische wijk-tweelingen laten uiteenlopende vervolgrichtingen zien; de spreiding is belangrijker dan één puntschatting.");
   }
 
-  return { title, message: sentences.join(" "), signals, topDriver };
+  return { title, message: sentences.join(" "), signals };
 }
 
 function renderCore(wijk) {
@@ -246,33 +253,116 @@ function renderCore(wijk) {
   const displayed = notable.length ? notable : core.signals.slice(0, 2);
   $("signalGrid").innerHTML = displayed.length ? displayed.map((item) => `
     <div class="signal-card ${item.score >= 90 ? "warn" : ""}">
-      <div class="signal-value">P${fmt.integer(item.score)}</div>
-      <div><strong>${escapeHtml(item.title)}</strong><span>${escapeHtml(percentileLabel(item.score))}</span></div>
+      <div class="signal-value">${item.score >= 90 ? "Sterk" : item.score >= 75 ? "Duidelijk" : "Rustig"}</div>
+      <div><strong>${escapeHtml(item.title)}</strong><span>Sterker dan bij ${fmt.integer(item.score)} van 100 referentiewijken</span></div>
     </div>`).join("") : '<div class="empty-state">Geen verantwoord peer-signaal beschikbaar.</div>';
 }
 
-function renderDirection(wijk) {
-  const core = buildCore(wijk);
-  const fallbackKeys = ["leeftijd_65_plus_pct", "huishoudens_met_kinderen_pct", "leeftijd_0_15_pct", "inwoners"];
-  const key = core.topDriver?.indicator || fallbackKeys.find((candidate) => metricHistory(wijk, candidate).length >= 2);
+function selectMetricDrivers(wijk) {
+  const drivers = (wijk.direction?.drivers || [])
+    .filter((driver) => metricHistory(wijk, driver.indicator).length >= 2);
+  const selected = [];
+  const usedDomains = new Set();
+
+  drivers.forEach((driver) => {
+    if (selected.length >= 3 || usedDomains.has(driver.domein)) return;
+    selected.push(driver);
+    usedDomains.add(driver.domein);
+  });
+  drivers.forEach((driver) => {
+    if (selected.length < 3 && !selected.includes(driver)) selected.push(driver);
+  });
+
+  const fallbackKeys = ["gemiddelde_woz", "leeftijd_65_plus_pct", "huishoudens_met_kinderen_pct", "inwoners"];
+  fallbackKeys.forEach((indicator) => {
+    if (selected.length < 3 && metricHistory(wijk, indicator).length >= 2 && !selected.some((item) => item.indicator === indicator)) {
+      selected.push({ indicator, label: metricLabels[indicator], domein: "Wijkprofiel" });
+    }
+  });
+  return selected.slice(0, 3);
+}
+
+function developmentMeaning(key, change) {
+  if (!change) return "Onvoldoende meetjaren.";
+  if (Math.abs(change.absolute) < 0.05) return "De gemeten waarde bleef vrijwel gelijk.";
+  const movement = change.absolute > 0 ? "nam toe" : "nam af";
+  if (metricUnit(key) === "procent") return `Het aandeel ${movement} met ${metricDelta(key, change.absolute)}.`;
+  return `De gemeten waarde ${movement} met ${metricDelta(key, change.absolute)}.`;
+}
+
+function renderActiveMetric(wijk, key) {
   const rows = metricHistory(wijk, key);
   const change = historyChange(wijk, key);
-
-  $("trajectoryTitle").textContent = metricLabels[key] || core.topDriver?.label || "Wijkontwikkeling";
+  $("trajectoryTitle").textContent = metricLabels[key] || "Wijkontwikkeling";
   $("trajectoryUnit").textContent = metricUnit(key) === "procent" ? "aandeel van de wijk" : "werkelijke waarden";
   $("trajectoryChart").innerHTML = rows.length >= 2 ? trajectorySvg(rows, key, wijk.wijk_naam) : '<div class="empty-state">Geen consistente tijdreeks beschikbaar.</div>';
   $("trajectoryNote").textContent = change
-    ? `${change.startYear}–${change.endYear}: ${metricValue(key, change.start)} naar ${metricValue(key, change.end)}. Werkelijke metingen; geen extrapolatie.`
+    ? `${change.startYear}–${change.endYear}: ${metricValue(key, change.start)} naar ${metricValue(key, change.end)}. Dit zijn gemeten waarden, geen voorspelling.`
     : "Onvoldoende vergelijkbare meetjaren.";
+  $("metricTabs").querySelectorAll("button").forEach((button) => {
+    const active = button.dataset.metric === key;
+    button.classList.toggle("active", active);
+    button.setAttribute("aria-selected", String(active));
+  });
+}
 
-  const signals = percentileSignals(wijk);
-  $("peerSignals").innerHTML = signals.length ? signals.map((item) => `
-    <div class="peer-signal">
-      <div class="peer-signal-top"><strong>${escapeHtml(item.title)}</strong><span>P${fmt.integer(item.score)} · ${escapeHtml(percentileLabel(item.score))}</span></div>
-      <div class="percentile-track" style="--position:${Math.min(99, Math.max(1, item.score))}%" role="img" aria-label="${escapeHtml(item.title)}: percentiel ${fmt.integer(item.score)}">
-      </div>
-      <div class="percentile-labels"><span>gebruikelijk</span><span>opvallend</span><span>uitzonderlijk</span></div>
-    </div>`).join("") : '<div class="empty-state">Onvoldoende vergelijkbare wijken voor een betrouwbare percentielpositie.</div>';
+function peerWhy(peer) {
+  const domains = Object.entries(peer.domeinafstanden || {})
+    .filter(([, value]) => Number.isFinite(Number(value)))
+    .sort((a, b) => a[1] - b[1])
+    .slice(0, 2)
+    .map(([key]) => domainLabels[key] || key);
+  return domains.length ? `Vooral overeenkomst in ${domains.join(" en ")}.` : "Vergelijkbaar op het totale wijkprofiel.";
+}
+
+function peerReading(wijk) {
+  const score = Number(wijk.signal?.peer_afwijking_percentiel);
+  if (!Number.isFinite(score)) return "Voor deze wijk is geen betrouwbare landelijke vergelijking beschikbaar.";
+  if (score >= 90) return `De recente ontwikkeling wijkt sterker af van vergelijkbare wijken dan bij ${fmt.integer(score)} van 100 referentiewijken. Dat maakt het patroon opvallend, niet automatisch gunstig of ongunstig.`;
+  if (score >= 75) return `De recente ontwikkeling wijkt sterker af dan bij ${fmt.integer(score)} van 100 referentiewijken. Het verschil is duidelijk, maar niet uitzonderlijk.`;
+  return `De recente ontwikkeling valt binnen wat bij veel vergelijkbare wijken voorkomt: sterker afwijkend dan bij ${fmt.integer(score)} van 100 referentiewijken.`;
+}
+
+function renderDirection(wijk) {
+  const drivers = selectMetricDrivers(wijk);
+  const validKeys = drivers.map((driver) => driver.indicator);
+  if (!validKeys.includes(state.selectedMetric)) state.selectedMetric = validKeys[0];
+  $("directionIntro").textContent = drivers.length >= 3
+    ? "Drie ontwikkelingen die samen laten zien wat er in de wijk verandert."
+    : drivers.length === 2
+      ? "Twee consistente ontwikkelingen; voor een derde reeks ontbreken voldoende meetjaren."
+      : "Alleen ontwikkelingen met voldoende vergelijkbare meetjaren worden getoond.";
+
+  $("metricTabs").innerHTML = drivers.map((driver, index) => `
+    <button type="button" role="tab" data-metric="${escapeHtml(driver.indicator)}" aria-selected="${index === 0}">${escapeHtml(metricLabels[driver.indicator] || driver.label)}</button>`).join("");
+  $("metricTabs").querySelectorAll("button").forEach((button) => {
+    button.addEventListener("click", () => {
+      state.selectedMetric = button.dataset.metric;
+      renderActiveMetric(wijk, state.selectedMetric);
+    });
+  });
+
+  $("metricSummary").innerHTML = drivers.map((driver) => {
+    const change = historyChange(wijk, driver.indicator);
+    return `<article class="metric-summary-card">
+      <span>${escapeHtml(metricLabels[driver.indicator] || driver.label)}</span>
+      <strong>${change ? `${metricValue(driver.indicator, change.start)} → ${metricValue(driver.indicator, change.end)}` : "Onvoldoende data"}</strong>
+      <p>${escapeHtml(developmentMeaning(driver.indicator, change))}</p>
+    </article>`;
+  }).join("") || '<div class="empty-state">Geen drie consistente tijdreeksen beschikbaar.</div>';
+
+  if (state.selectedMetric) renderActiveMetric(wijk, state.selectedMetric);
+
+  const peers = (wijk.peers || []).slice(0, 4);
+  $("peerIntro").textContent = peers.length
+    ? "Dit zijn de meest vergelijkbare huidige wijken. De toelichting noemt de onderdelen waarop de overeenkomst het sterkst is."
+    : "Er zijn onvoldoende vergelijkbare wijken gevonden.";
+  $("currentPeers").innerHTML = peers.map((peer) => `
+    <li>
+      <span class="peer-rank">${fmt.integer(peer.rank)}</span>
+      <div><strong>${escapeHtml(peer.wijk_naam)}</strong><span>${escapeHtml(peer.gemeente)}</span><p>${escapeHtml(peerWhy(peer))}</p></div>
+    </li>`).join("") || '<li class="empty-state">Geen betrouwbare vergelijkingswijken beschikbaar.</li>';
+  $("peerReading").textContent = peerReading(wijk);
 }
 
 function trajectorySvg(rows, key, wijkName) {
@@ -317,7 +407,7 @@ function renderHistorical(wijk) {
   const outcomes = Object.values(historical.relative_outcomes || {})
     .filter((item) => Number.isFinite(item.mediaan_tov_landelijk) && Number.isFinite(item.p25_tov_landelijk) && Number.isFinite(item.p75_tov_landelijk))
     .sort((a, b) => Math.abs(b.mediaan_tov_landelijk) - Math.abs(a.mediaan_tov_landelijk))
-    .slice(0, 4);
+    .slice(0, 3);
   const n = outcomes[0]?.n || historical.method?.k;
 
   $("historicalSample").textContent = n ? `${fmt.integer(n)} analogieën · 2 jaar vooruit` : "Onvoldoende historie";
@@ -334,12 +424,53 @@ function renderHistorical(wijk) {
 
   const validation = historical.validation || state.municipality.method?.historical_validation?.analog_calibration || {};
   const holdout = validation.selected_analogy_holdout || {};
-  const gain = Number(validation.traject_meerwaarde_holdout_pct);
   $("validationStrip").innerHTML = outcomes.length ? `
-    <div class="validation-item"><strong>${fmt.one(holdout.beter_dan_landelijke_trend_pct)}%</strong><span>beter dan de landelijke trend in de onafhankelijke holdout</span></div>
-    <div class="validation-item"><strong>${fmt.one(holdout.beter_dan_recente_lokale_afwijking_pct)}%</strong><span>beter dan doortrekken van de recente lokale afwijking</span></div>
-    <div class="validation-item"><strong>${Number.isFinite(gain) ? `${gain > 0 ? "+" : ""}${fmt.one(gain)}%` : "–"}</strong><span>meerwaarde van trajectinformatie boven alleen profielmatching</span></div>`
-    : '<div class="validation-item"><strong>Niet toegepast</strong><span>De methode is landelijk gevalideerd, maar voor deze wijk ontbreken voldoende vergelijkbare historische trajecten.</span></div>';
+    <strong>Wat zegt de historische test?</strong>
+    <p>Bij ${fmt.integer(holdout.beter_dan_landelijke_trend_pct)} van 100 geteste wijken gaf deze methode een nauwkeuriger richting dan alleen de landelijke ontwikkeling. Dat is een bescheiden aanwijzing: gebruik de spiegel als vergelijkingskader, niet als voorspelling.</p>`
+    : '<strong>Geen historische spiegel</strong><p>De methode is landelijk getest, maar voor deze wijk ontbreken voldoende vergelijkbare historische trajecten.</p>';
+
+  renderContext(wijk);
+}
+
+function renderContext(wijk) {
+  const leefbaarheid = wijk.leefbaarheid || {};
+  const leefHistory = leefbaarheid.history || [];
+  const leefFirst = leefHistory[0];
+  const leefLast = leefbaarheid.latest || leefHistory[leefHistory.length - 1];
+  const leefDelta = leefFirst && leefLast ? Number(leefLast.waarde) - Number(leefFirst.waarde) : null;
+  let leefText = "Geen consistente leefbaarheidsreeks beschikbaar.";
+  if (Number.isFinite(leefDelta)) {
+    const movement = Math.abs(leefDelta) < 0.05 ? "vrijwel stabiel" : leefDelta > 0 ? "toegenomen" : "afgenomen";
+    leefText = Math.abs(leefDelta) < 0.05
+      ? `Sinds ${leefFirst.jaar} is de score vrijwel stabiel.`
+      : `Sinds ${leefFirst.jaar} is de score ${movement} (${leefDelta > 0 ? "+" : ""}${fmt.two(leefDelta)} punt).`;
+  }
+
+  const crime = wijk.criminaliteit || {};
+  const crimeAvailable = crime.status === "ok" && Number.isFinite(Number(crime.laatste_12m_aantal));
+  const smallPopulation = Boolean(crime.kleine_populatie);
+  let crimeChange = "Geen vergelijking met de voorgaande twaalf maanden beschikbaar.";
+  if (crimeAvailable && Number.isFinite(Number(crime.verandering_pct))) {
+    const value = Number(crime.verandering_pct);
+    crimeChange = Math.abs(value) < 0.1
+      ? "Evenveel registraties als in de voorgaande twaalf maanden."
+      : `${fmt.one(Math.abs(value))}% ${value > 0 ? "meer" : "minder"} registraties dan in de voorgaande twaalf maanden.`;
+  }
+  if (crimeAvailable && smallPopulation) {
+    crimeChange += " Deze wijk heeft weinig inwoners; een verhouding per 1.000 inwoners zou daardoor misleidend zijn.";
+  }
+
+  $("contextGrid").innerHTML = `
+    <article class="context-card">
+      <span>Leefbaarheid · ${escapeHtml(leefLast?.jaar || "geen jaar")}</span>
+      <strong>${leefLast ? `${fmt.two(leefLast.waarde)} · ${escapeHtml(leefLast.klasse)}` : "Niet beschikbaar"}</strong>
+      <p>${escapeHtml(leefText)}</p>
+    </article>
+    <article class="context-card">
+      <span>Politieregistraties · ${escapeHtml(crime.laatste_periode || "geen periode")}</span>
+      <strong>${crimeAvailable ? `${fmt.integer(crime.laatste_12m_aantal)} in 12 maanden${smallPopulation ? "" : ` · ${fmt.one(crime.laatste_12m_per_1000)} per 1.000 inwoners`}` : "Niet beschikbaar"}</strong>
+      <p>${escapeHtml(crimeChange)} Registraties zijn context, geen volledig beeld van veiligheid.</p>
+    </article>`;
 }
 
 function mirrorSvg(outcomes, wijkName) {
@@ -379,22 +510,24 @@ function mirrorSvg(outcomes, wijkName) {
 
 function renderMethod(wijk) {
   const method = wijk.historical?.method || {};
-  const direction = state.municipality.method?.historical_validation?.direction_backtest?.overall || {};
   const validationPeriod = state.municipality.method?.historical_validation?.direction_backtest?.periods?.[0] || {};
   const sources = state.municipality.sources || {};
   const continuity = state.municipality.method?.historical_validation?.continuity_rule;
   const featureCount = method.features?.length || validationPeriod.n_features;
   const domainCount = method.domains?.length || validationPeriod.n_domeinen;
+  const holdout = wijk.historical?.validation?.selected_analogy_holdout
+    || state.municipality.method?.historical_validation?.analog_calibration?.selected_analogy_holdout
+    || {};
 
   $("methodGrid").innerHTML = `
-    <div class="method-card"><span>Bronperiode</span><strong>2018–${escapeHtml(wijk.latest_year)}</strong><p>CBS-wijkkenmerken; bronjaren blijven per indicator gescheiden.</p></div>
-    <div class="method-card"><span>Vergelijking</span><strong>${fmt.integer(featureCount)} kenmerken · ${fmt.integer(domainCount)} domeinen</strong><p>Profiel en historisch traject tellen ieder voor de helft mee.</p></div>
-    <div class="method-card"><span>Out-of-time toets</span><strong>2020→2022 / 2022→2024</strong><p>Afstemming op de eerste periode, beoordeling op de latere holdout.</p></div>
-    <div class="method-card"><span>Belangrijkste beperking</span><strong>${fmt.one(direction.beter_dan_landelijke_trend_pct)}% wint van landelijke trend</strong><p>Het lineaire trendscenario presteert niet beter dan deze baseline en staat daarom niet als voorspelling op de pagina.</p></div>`;
+    <div class="method-card"><span>Gebruikte jaren</span><strong>2018–${escapeHtml(wijk.latest_year)}</strong><p>De bronjaren worden per indicator getoond; recentere veiligheidsdata staan apart als context.</p></div>
+    <div class="method-card"><span>Zoeken naar gelijkenis</span><strong>${fmt.integer(featureCount)} kenmerken · ${fmt.integer(domainCount)} thema’s</strong><p>Demografie, woningen, woningmarkt en sociaaleconomie wegen evenwichtig mee.</p></div>
+    <div class="method-card"><span>Historisch getest</span><strong>${fmt.integer(holdout.n)} wijken · latere periode</strong><p>De instellingen zijn gekozen met eerdere jaren en daarna gecontroleerd met nieuwere jaren.</p></div>
+    <div class="method-card"><span>Openbare bronnen</span><strong>CBS · Leefbaarometer · Politie/CBS</strong><p>Alleen gemeten en herleidbare brondata; ontbrekende uitkomsten worden niet ingevuld.</p></div>`;
 
   $("methodDetail").innerHTML = `
-    <p><strong>Matching.</strong> Eerst blijft de ${fmt.one((method.profile_gate_pct || 0) * 100)}% structureel meest vergelijkbare historie over. Binnen die groep worden ${fmt.integer(method.k)} analogieën samengevat. Indicatoren zijn verdeeld over demografie, woningstructuur, woningmarkt en sociaaleconomie, zodat een domein met veel kenmerken niet automatisch domineert.</p>
-    <p><strong>Datakwaliteit.</strong> ${escapeHtml(continuity || "Alleen door de tijd vergelijkbare wijkcodes worden gebruikt.")} Bronnen: ${escapeHtml(sources.structuur?.name || "CBS Kerncijfers Wijken en Buurten")}, ${escapeHtml(sources.leefbaarheid?.name || "Leefbaarometer 3.0")} en ${escapeHtml(sources.criminaliteit?.name || "Politie/CBS")}. Historische analogieën zijn geen causale voorspelling.</p>`;
+    <p><strong>Hoe worden tweelingen gekozen?</strong> Eerst blijft de ${fmt.one((method.profile_gate_pct || 0) * 100)}% meest vergelijkbare historie over. Binnen die groep worden de ${fmt.integer(method.k)} beste matches samengevat. De huidige gelijkenis en het eerdere ontwikkelpad tellen ieder voor de helft mee.</p>
+    <p><strong>Welke beperkingen gelden?</strong> ${escapeHtml(continuity || "Alleen door de tijd vergelijkbare wijkcodes worden gebruikt.")} Een overeenkomst uit het verleden bewijst geen oorzaak en voorspelt niet wat in deze wijk zal gebeuren. Bronnen: ${escapeHtml(sources.structuur?.name || "CBS Kerncijfers Wijken en Buurten")}, ${escapeHtml(sources.leefbaarheid?.name || "Leefbaarometer 3.0")} en ${escapeHtml(sources.criminaliteit?.name || "Politie/CBS")}.</p>`;
 }
 
 load().catch((error) => {

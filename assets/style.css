@@ -271,7 +271,7 @@ select:focus-visible, button:focus-visible, summary:focus-visible, a:focus-visib
 .signal-grid { display: grid; gap: 9px; }
 .signal-card {
   display: grid;
-  grid-template-columns: 50px 1fr;
+  grid-template-columns: 72px 1fr;
   gap: 12px;
   align-items: center;
   padding: 12px;
@@ -282,9 +282,10 @@ select:focus-visible, button:focus-visible, summary:focus-visible, a:focus-visib
 .signal-card .signal-value {
   display: grid;
   place-items: center;
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
+  width: 72px;
+  min-height: 38px;
+  padding: 7px;
+  border-radius: 999px;
   background: var(--mint);
   color: var(--ink);
   font-size: 13px;
@@ -336,6 +337,28 @@ select:focus-visible, button:focus-visible, summary:focus-visible, a:focus-visib
 }
 .chart-heading strong { display: block; margin-top: 2px; font-size: 15px; }
 .chart-unit { text-align: right; }
+.metric-tabs {
+  margin-top: 18px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+.metric-tabs button {
+  padding: 8px 11px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--paper);
+  color: var(--ink-soft);
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 750;
+}
+.metric-tabs button:hover { border-color: var(--mint-bright); }
+.metric-tabs button.active {
+  border-color: var(--ink);
+  background: var(--ink);
+  color: #fff;
+}
 .trajectory-chart { min-height: 230px; margin-top: 16px; }
 .trajectory-chart svg, .mirror-chart svg { display: block; width: 100%; height: auto; overflow: visible; }
 .axis-line { stroke: #d9d7cf; stroke-width: 1; }
@@ -346,6 +369,60 @@ select:focus-visible, button:focus-visible, summary:focus-visible, a:focus-visib
 .svg-label { fill: #60736f; font-size: 11px; }
 .svg-value { fill: var(--ink); font-size: 11px; font-weight: 750; }
 .chart-note { margin: 10px 0 0; color: var(--ink-soft); font-size: 11px; line-height: 1.5; }
+.metric-summary {
+  margin-top: 18px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+.metric-summary-card {
+  min-width: 0;
+  padding: 12px;
+  border-radius: 11px;
+  background: var(--paper);
+}
+.metric-summary-card > span {
+  display: block;
+  color: var(--ink-soft);
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+.metric-summary-card strong { display: block; margin-top: 5px; font-size: 12px; line-height: 1.35; }
+.metric-summary-card p { margin: 5px 0 0; color: var(--ink-soft); font-size: 10px; line-height: 1.45; }
+.peer-intro { margin: 13px 0 0; color: var(--ink-soft); font-size: 12px; line-height: 1.5; }
+.current-peer-list { margin: 15px 0 0; padding: 0; list-style: none; }
+.current-peer-list li {
+  display: grid;
+  grid-template-columns: 28px 1fr;
+  gap: 10px;
+  padding: 12px 0;
+  border-top: 1px solid #e7e3da;
+}
+.peer-rank {
+  width: 25px;
+  height: 25px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--mint);
+  font-size: 10px;
+  font-weight: 850;
+}
+.current-peer-list strong { display: block; font-size: 13px; }
+.current-peer-list div > span { display: block; color: var(--ink-soft); font-size: 10px; }
+.current-peer-list p { margin: 4px 0 0; color: var(--ink-soft); font-size: 10px; line-height: 1.4; }
+.peer-reading {
+  margin-top: 14px;
+  padding: 14px;
+  border-left: 3px solid var(--coral);
+  border-radius: 0 10px 10px 0;
+  background: var(--coral-soft);
+  color: var(--ink);
+  font-size: 11px;
+  line-height: 1.5;
+}
 .legend-dot::before {
   content: "";
   display: inline-block;
@@ -414,19 +491,37 @@ select:focus-visible, button:focus-visible, summary:focus-visible, a:focus-visib
 .twin-list strong { display: block; font-size: 13px; }
 .twin-list span { display: block; color: var(--ink-soft); font-size: 10px; }
 .twin-period { white-space: nowrap; font-size: 11px !important; font-weight: 700; }
-.validation-strip {
+.evidence-note {
   margin-top: 22px;
+  padding: 17px 19px;
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  overflow: hidden;
+  grid-template-columns: minmax(150px, .35fr) 1fr;
+  gap: 18px;
+  align-items: start;
   border: 1px solid var(--line);
   border-radius: 15px;
   background: var(--paper);
 }
-.validation-item { padding: 17px 18px; border-left: 1px solid var(--line); }
-.validation-item:first-child { border-left: 0; }
-.validation-item strong { display: block; font-size: 23px; letter-spacing: -.03em; }
-.validation-item span { display: block; margin-top: 3px; color: var(--ink-soft); font-size: 10px; line-height: 1.4; }
+.evidence-note strong { font-size: 14px; }
+.evidence-note p { margin: 0; color: var(--ink-soft); font-size: 12px; line-height: 1.55; }
+.context-block {
+  margin-top: 32px;
+  padding-top: 28px;
+  border-top: 1px solid var(--line);
+}
+.context-heading {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  align-items: end;
+}
+.context-heading h4 { margin: 0; font-family: Georgia, "Times New Roman", serif; font-size: 24px; font-weight: 500; letter-spacing: -.025em; }
+.context-heading > p { max-width: 390px; margin: 0; color: var(--ink-soft); font-size: 11px; }
+.context-grid { margin-top: 16px; display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+.context-card { padding: 17px; border: 1px solid var(--line); border-radius: 13px; background: #fff; }
+.context-card > span { color: var(--ink-soft); font-size: 9px; font-weight: 800; letter-spacing: .05em; text-transform: uppercase; }
+.context-card strong { display: block; margin-top: 6px; font-size: 15px; line-height: 1.35; }
+.context-card p { margin: 7px 0 0; color: var(--ink-soft); font-size: 11px; line-height: 1.5; }
 
 .method { padding: 62px 0 10px; }
 .method-title { max-width: 660px; }
@@ -473,6 +568,7 @@ footer { padding: 30px 0 42px; background: var(--paper); }
   .core-panel { gap: 26px; }
   .signal-grid { grid-template-columns: repeat(3, 1fr); }
   .signal-card { grid-template-columns: 1fr; }
+  .signal-card .signal-value { width: auto; justify-self: start; }
   .method-grid { grid-template-columns: repeat(2, 1fr); }
 }
 
@@ -493,7 +589,8 @@ footer { padding: 30px 0 42px; background: var(--paper); }
   .panel { padding: 27px 20px; border-radius: 17px; }
   .section-number { right: 15px; font-size: 58px; }
   .signal-grid { grid-template-columns: 1fr; }
-  .signal-card { grid-template-columns: 50px 1fr; }
+  .signal-card { grid-template-columns: 72px 1fr; }
+  .signal-card .signal-value { width: 72px; }
   .direction-layout { margin-top: 22px; }
   .trajectory-card, .peer-card, .twin-list-wrap { padding: 17px; }
   .trajectory-chart, .mirror-chart { min-height: 0; }
@@ -501,9 +598,11 @@ footer { padding: 30px 0 42px; background: var(--paper); }
   .mirror-chart .mirror-row-label { font-size: 22px; }
   .mirror-chart .mirror-axis-label { font-size: 18px; }
   .mirror-chart .svg-value { font-size: 20px; }
-  .validation-strip { grid-template-columns: 1fr; }
-  .validation-item { border-left: 0; border-top: 1px solid var(--line); }
-  .validation-item:first-child { border-top: 0; }
+  .metric-summary { grid-template-columns: 1fr; }
+  .evidence-note { grid-template-columns: 1fr; gap: 6px; }
+  .context-heading { display: block; }
+  .context-heading > p { margin-top: 8px; }
+  .context-grid { grid-template-columns: 1fr; }
   .method { padding-top: 48px; }
   .method-grid, .method-detail { grid-template-columns: 1fr; }
   .method-card { min-height: 0; }

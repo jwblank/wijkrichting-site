@@ -6,7 +6,7 @@
   <meta name="description" content="Ontdek waar een wijk naartoe beweegt en wat vergelijkbare wijken ons uit het verleden leren.">
   <meta name="theme-color" content="#102f2b">
   <title>WijkRichting · historische wijk-tweelingen</title>
-  <link rel="stylesheet" href="assets/style.css?v=20261102-1">
+  <link rel="stylesheet" href="assets/style.css?v=20261102-2">
 </head>
 <body>
   <a class="skip-link" href="#resultaat">Naar het wijkbeeld</a>
@@ -72,7 +72,7 @@
               <p class="overline">De ontwikkelrichting</p>
               <h3 id="directionTitle">Wat valt op ten opzichte van vergelijkbare wijken?</h3>
             </div>
-            <p id="directionIntro">Alleen robuuste, peer-relative signalen krijgen nadruk.</p>
+            <p id="directionIntro">Drie ontwikkelingen die samen laten zien wat er in de wijk verandert.</p>
           </div>
 
           <div class="direction-layout">
@@ -84,20 +84,22 @@
                 </div>
                 <span class="chart-unit" id="trajectoryUnit"></span>
               </div>
+              <div class="metric-tabs" id="metricTabs" role="tablist" aria-label="Kies een ontwikkeling"></div>
               <div id="trajectoryChart" class="trajectory-chart"></div>
               <p class="chart-note" id="trajectoryNote"></p>
+              <div class="metric-summary" id="metricSummary" aria-label="Samenvatting van de getoonde ontwikkelingen"></div>
             </div>
 
             <div class="peer-card">
               <div class="chart-heading">
                 <div>
-                  <span>Landelijke positie</span>
-                  <strong>Afwijking van peers</strong>
+                  <span>Vergelijkbare wijken</span>
+                  <strong>Wijken met een soortgelijk profiel</strong>
                 </div>
-                <span class="legend-dot">percentiel</span>
               </div>
-              <div id="peerSignals" class="peer-signals"></div>
-              <p class="chart-note">Percentielen vergelijken de wijk met landelijke referentiewijken. Ze zijn geen kans of risicoscore.</p>
+              <p class="peer-intro" id="peerIntro"></p>
+              <ol class="current-peer-list" id="currentPeers"></ol>
+              <div class="peer-reading" id="peerReading"></div>
             </div>
           </div>
         </section>
@@ -134,17 +136,28 @@
             </aside>
           </div>
 
-          <div class="validation-strip" id="validationStrip"></div>
+          <div class="evidence-note" id="validationStrip"></div>
+
+          <div class="context-block" aria-labelledby="contextTitle">
+            <div class="context-heading">
+              <div>
+                <p class="overline">Aanvullende context</p>
+                <h4 id="contextTitle">Hoe staat de wijk er nu voor?</h4>
+              </div>
+              <p>Deze cijfers helpen het wijkbeeld te lezen, maar bepalen de ontwikkelrichting niet.</p>
+            </div>
+            <div class="context-grid" id="contextGrid"></div>
+          </div>
         </section>
 
         <section class="method" aria-labelledby="methodTitle">
           <div class="method-title">
             <p class="overline">Methode & verantwoording</p>
-            <h3 id="methodTitle">Sterke data science, zonder spectaculaire claims.</h3>
+            <h3 id="methodTitle">Hoe betrouwbaar is dit?</h3>
           </div>
           <div class="method-grid" id="methodGrid"></div>
           <details>
-            <summary>Hoe werkt de vergelijking precies?</summary>
+            <summary>Bekijk de technische uitleg</summary>
             <div class="method-detail" id="methodDetail"></div>
           </details>
         </section>
@@ -165,6 +178,6 @@
     </div>
   </footer>
 
-  <script src="assets/app.js?v=20261102-1"></script>
+  <script src="assets/app.js?v=20261102-2"></script>
 </body>
 </html>

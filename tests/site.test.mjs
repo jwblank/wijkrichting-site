@@ -56,17 +56,27 @@ test("de pagina houdt de drie analytische onderdelen centraal", async () => {
   assert.match(html, /Het kernbeeld/);
   assert.match(html, /De ontwikkelrichting/);
   assert.match(html, /De historische spiegel/);
-  assert.doesNotMatch(html, /Gemeenteoverzicht|Aanvullende context|lange tabel/i);
+  assert.match(html, /Aanvullende context/);
+  assert.doesNotMatch(html, /Gemeenteoverzicht|lange tabel/i);
 });
 
-test("de zwakke trendbaseline wordt niet als voorspelling gepresenteerd", async () => {
+test("de site toont meerdere ontwikkelingen in gewone taal", async () => {
   const data = await readJson("data/0489-barendrecht.json");
   const result = data.method.historical_validation.direction_backtest.overall;
   assert.ok(result.beter_dan_landelijke_trend_pct < 50);
+  assert.ok(data.wijken.some((wijk) => wijk.criminaliteit?.kleine_populatie));
 
+  const html = await readText("index.html");
   const app = await readText("assets/app.js");
-  assert.match(app, /presteert niet beter dan deze baseline/);
-  assert.match(app, /Onvoldoende vergelijkbare wijken voor een betrouwbare percentielpositie/);
+  assert.match(html, /id="metricTabs"/);
+  assert.match(html, /id="metricSummary"/);
+  assert.match(html, /id="currentPeers"/);
+  assert.match(html, /id="contextGrid"/);
+  assert.match(app, /selectMetricDrivers/);
+  assert.match(app, /Sterker dan bij.*van 100 referentiewijken/);
+  assert.doesNotMatch(app, /P\$\{fmt\.integer/);
+  assert.doesNotMatch(app, /Belangrijkste beperking|presteert niet beter dan deze baseline/i);
+  assert.match(app, /een verhouding per 1\.000 inwoners zou daardoor misleidend zijn/);
   assert.match(app, /vult ontbrekende uitkomsten niet in/);
   assert.doesNotMatch(app, /AI-voorspelling|zekere voorspelling/i);
 });
