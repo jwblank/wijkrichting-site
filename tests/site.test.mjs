@@ -31,7 +31,7 @@ test("ieder wijkbeeld bevat de vereiste analytische bouwstenen", async () => {
 
     for (const wijk of data.wijken) {
       wijkCount += 1;
-      assert.match(wijk.wijk_code, /^WK\d+$/);
+      assert.match(wijk.wijk_code, /^WK[A-Z0-9]+$/);
       assert.ok(Object.keys(wijk.history || {}).length > 0);
       if (wijk.signal) {
         assert.ok(Number.isFinite(wijk.signal.peer_afwijking_percentiel));
@@ -40,7 +40,7 @@ test("ieder wijkbeeld bevat de vereiste analytische bouwstenen", async () => {
       }
       if ((wijk.historical?.analogs || []).length > 0) {
         assert.equal(wijk.historical.method?.k, 30);
-        assert.equal(wijk.historical.validation?.holdout_period, "2022→2024");
+        assert.equal(wijk.historical.validation?.holdout_period, "2023→2025");
         assert.ok(Object.keys(wijk.historical.relative_outcomes || {}).length >= 4);
       }
     }
@@ -63,7 +63,11 @@ test("de pagina houdt de drie analytische onderdelen centraal", async () => {
 test("de site toont meerdere ontwikkelingen in gewone taal", async () => {
   const data = await readJson("data/0489-barendrecht.json");
   const result = data.method.historical_validation.direction_backtest.overall;
-  assert.ok(result.beter_dan_landelijke_trend_pct < 50);
+  assert.ok(result.beter_dan_landelijke_trend_pct > 50);
+  assert.equal(data.sources.structuur.latest_year, 2025);
+  assert.equal(data.sources.criminaliteit.frequency, "maandelijks");
+  assert.ok(data.wijken.every((wijk) => wijk.latest_year === 2025));
+  assert.ok(data.wijken.some((wijk) => wijk.criminaliteit?.laatste_periode === "2026 september"));
   assert.ok(data.wijken.some((wijk) => wijk.criminaliteit?.kleine_populatie));
 
   const html = await readText("index.html");

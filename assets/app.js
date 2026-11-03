@@ -518,9 +518,14 @@ function renderMethod(wijk) {
   const holdout = wijk.historical?.validation?.selected_analogy_holdout
     || state.municipality.method?.historical_validation?.analog_calibration?.selected_analogy_holdout
     || {};
+  const firstStructuralYear = Object.values(wijk.history || {})
+    .flat()
+    .map((row) => Number(row.jaar))
+    .filter(Number.isFinite)
+    .sort((a, b) => a - b)[0];
 
   $("methodGrid").innerHTML = `
-    <div class="method-card"><span>Gebruikte jaren</span><strong>2018–${escapeHtml(wijk.latest_year)}</strong><p>De bronjaren worden per indicator getoond; recentere veiligheidsdata staan apart als context.</p></div>
+    <div class="method-card"><span>Gebruikte jaren</span><strong>${escapeHtml(firstStructuralYear || "–")}–${escapeHtml(wijk.latest_year)}</strong><p>De bronjaren worden per indicator getoond; recentere veiligheidsdata staan apart als context.</p></div>
     <div class="method-card"><span>Zoeken naar gelijkenis</span><strong>${fmt.integer(featureCount)} kenmerken · ${fmt.integer(domainCount)} thema’s</strong><p>Demografie, woningen, woningmarkt en sociaaleconomie wegen evenwichtig mee.</p></div>
     <div class="method-card"><span>Historisch getest</span><strong>${fmt.integer(holdout.n)} wijken · latere periode</strong><p>De instellingen zijn gekozen met eerdere jaren en daarna gecontroleerd met nieuwere jaren.</p></div>
     <div class="method-card"><span>Openbare bronnen</span><strong>CBS · Leefbaarometer · Politie/CBS</strong><p>Alleen gemeten en herleidbare brondata; ontbrekende uitkomsten worden niet ingevuld.</p></div>`;

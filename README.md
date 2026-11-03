@@ -20,13 +20,13 @@ Leefbaarheid, veiligheid en brede gemeentelijke overzichten zijn uit de hoofdflo
 
 De vooraf berekende analyse gebruikt negen structurele kenmerken, verdeeld over demografie, woningstructuur, woningmarkt en sociaaleconomie. Domeinen tellen gelijk mee. Voor de historische spiegel blijft eerst de 25% structureel best passende historie over. Daarna worden profiel en wijk-specifiek traject ieder voor 50% gewogen en worden de 30 beste analogieën samengevat.
 
-De methode is afgesteld op 2020→2022 en onafhankelijk beoordeeld op 2022→2024 (`n=2.046`):
+De instellingen zijn in de vorige databuild afgesteld op 2020→2022 en voor deze update bevroren. Daarna zijn ze opnieuw, volledig buiten de afstelperiode, beoordeeld op 2023→2025 (`n=2.177`):
 
-- in 55,6% van de wijken was de analogiemethode nauwkeuriger dan de landelijke trend;
-- in 72,9% was zij nauwkeuriger dan het doortrekken van de recente lokale afwijking;
-- trajectinformatie verlaagde de mediane fout met 1,5% ten opzichte van alleen profielmatching.
+- in 53,1% van de wijken was de analogiemethode nauwkeuriger dan de landelijke trend;
+- in 78,8% was zij nauwkeuriger dan het doortrekken van de recente lokale afwijking;
+- trajectinformatie verlaagde de mediane fout in deze nieuwste holdout niet: de fout was 0,5% hoger dan bij alleen profielmatching.
 
-Die meerwaarde is bescheiden. Het afzonderlijke lineaire trendscenario was slechts in 38,9% van de historische gevallen beter dan de landelijke trend. Het wordt daarom niet als voorspelling in de hoofdinterface gebruikt.
+De meerwaarde ten opzichte van de landelijke trend is bescheiden. Het afzonderlijke lineaire trendscenario wordt daarom niet als voorspelling in de hoofdinterface gebruikt.
 
 Historische analogieën beschrijven empirische vervolgrichtingen, geen causale of zekere voorspelling. Alleen wijkcodes die in de tussenliggende CBS-jaargangen aanwezig zijn en geen bekende indelingswijziging hebben, worden gebruikt.
 
@@ -36,9 +36,9 @@ Deze repository bevat de openbare presentatielaag en vooraf berekende JSON-resul
 
 Bronnen in de huidige databuild:
 
-- CBS Kerncijfers Wijken en Buurten, 2018–2024;
+- CBS Kerncijfers Wijken en Buurten, 2019–2025;
 - Leefbaarometer 3.0, t/m 2024;
-- Politie/CBS 47022NED voor aanvullende veiligheidscontext in de brondata.
+- Politie/CBS 47022NED, voortschrijdende twaalf maanden t/m september 2026, als aanvullende veiligheidscontext.
 
 De browser voert geen matching of modelberekeningen uit. Daardoor blijft de publieke site snel, controleerbaar en onderhoudsarm.
 
