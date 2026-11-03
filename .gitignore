@@ -1,0 +1,15 @@
+_site/
+
+# Methodiek en brondata horen uitsluitend in de private repository.
+*.csv
+*.ipynb
+*.parquet
+*.pickle
+*.pkl
+*.py
+src/
+scripts/
+notebooks/
+private/
+public_export/
+data/cache/

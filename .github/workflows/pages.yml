@@ -26,8 +26,75 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Validate public data and interface
-        run: npm run check
+      - name: Bewaak de grens met de private analysemotor
+        run: |
+          python - <<'PY'
+          import subprocess
+
+          allowed_files = {
+              ".gitignore",
+              ".nojekyll",
+              "README.md",
+              "index.html",
+              ".github/workflows/pages.yml",
+          }
+          allowed_roots = ("assets/", "data/")
+          forbidden_suffixes = (
+              ".csv", ".ipynb", ".parquet", ".pickle", ".pkl", ".py",
+          )
+
+          tracked = subprocess.check_output(
+              ["git", "ls-files"], text=True
+          ).splitlines()
+          unexpected = [
+              path for path in tracked
+              if path not in allowed_files
+              and not path.startswith(allowed_roots)
+          ]
+          forbidden = [
+              path for path in tracked
+              if path.lower().endswith(forbidden_suffixes)
+          ]
+          if unexpected or forbidden:
+              raise SystemExit(
+                  "Publieke grenscontrole mislukt. Onverwacht: "
+                  f"{unexpected}; verboden bronbestanden: {forbidden}"
+              )
+          print("Publieke repository bevat uitsluitend site- en uitvoerbestanden.")
+          PY
+
+      - name: Valideer statische site en gegenereerde uitvoer
+        run: |
+          node --check assets/app.js
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          index = json.loads(
+              Path("data/gemeenten.json").read_text(encoding="utf-8")
+          )
+          assert index["municipality_count"] >= 300
+          assert index["wijk_count"] >= 2000
+          assert len(index["municipalities"]) == index["municipality_count"]
+
+          for municipality in index["municipalities"]:
+              path = Path(municipality["data_file"])
+              assert path.is_file(), path
+              data = json.loads(path.read_text(encoding="utf-8"))
+              assert data["municipality"]["cbs_code"] == municipality["cbs_code"]
+              assert len(data["wijken"]) == municipality["wijk_count"]
+              assert data["sources"]["structuur"]["latest_year"] >= 2025
+
+          html = Path("index.html").read_text(encoding="utf-8")
+          assert html.count('class="section-number"') == 3
+          print("Statische site en publieke data zijn geldig.")
+          PY
+
+      - name: Maak uitsluitend de publieke sitebundel
+        run: |
+          mkdir _site
+          cp index.html .nojekyll _site/
+          cp -R assets data _site/
 
       - name: Configure Pages
         uses: actions/configure-pages@v5
@@ -35,7 +102,7 @@ jobs:
       - name: Upload static site
         uses: actions/upload-pages-artifact@v3
         with:
-          path: .
+          path: _site
 
       - name: Deploy to GitHub Pages
         id: deployment
